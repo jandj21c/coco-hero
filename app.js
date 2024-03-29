@@ -35,8 +35,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 route_loader.init(app, express.Router());
-polling_coin_price.init();
-notify.eventReadyPriceNotify();
+//polling_coin_price.init();
+//notify.eventReadyPriceNotify();
 
 // unexpected error handlder
 app.use( expressErrorHandler.httpError(404) );
@@ -47,4 +47,5 @@ app.all('*', function(req, res){
 
 app.listen(PORT, function() {
   console.log('============= 기파랑의 리플 챗봇 서버가 시작되었습니다 ============');
+  console.log('=============      Server is up on port ${PORT}.    ============');
 });

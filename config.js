@@ -1,6 +1,6 @@
 module.exports = {
 
-    server_port : process.env.PORT,
+    server_port : process.env.PORT || 3000,
   
     //database_host : 'us-cdbr-iron-east-03.cleardb.net',
     //dialect : 'mysql',

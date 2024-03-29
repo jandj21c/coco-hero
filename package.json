@@ -4,10 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "giparang",
+  "license": "MIT",
   "devDependencies": {
     "nodemon": "^3.1.0"
   },
@@ -15,6 +16,7 @@
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "express-error-handler": "^1.1.0",
+    "http": "^0.0.1-security",
     "morgan": "^1.10.0"
   }
 }

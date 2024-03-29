@@ -3,7 +3,7 @@ var route_loader = {};
 var config = require('../config');
 
 route_loader.init = function(app, router) {
-	console.log('route_loader.init 호출됨.');
+	console.log('============= route_loader.init 호출됨. =============');
 	return initRoutes(app, router);
 }
 
@@ -29,8 +29,7 @@ function initRoutes(app, router) {
 			router.route(curItem.path).post(curModule[curItem.method]);
 		}
 
-
-		console.log('라우팅 모듈 [%s]이(가) 설정됨.', curItem.method);
+		console.log('============= [ROUTES SETTED 라우팅 모듈 [%s]이(가) 설정됨. =============', curItem.method);
 	}
 
     // 라우터 객체 등록
