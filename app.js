@@ -39,7 +39,14 @@ route_loader.init(app, express.Router());
 //notify.eventReadyPriceNotify();
 
 // unexpected error handlder
+var errorHandler = expressErrorHandler({
+    static: {
+        '404': './error.html'
+    }
+})
+
 app.use( expressErrorHandler.httpError(404) );
+app.use( errorHandler );
 
 app.all('*', function(req, res){
   res.status(404).send('<h1>ERROR - Not Found this URL. by Giparang.</h1>');
