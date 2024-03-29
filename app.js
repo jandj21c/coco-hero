@@ -28,7 +28,7 @@ const PORT = config.server_port;
 
 // 익스프레스 객체 생성
 var app = express();
-sequelize.sync(); // 데이터베이스 동기화
+//sequelize.sync(); // 데이터베이스 동기화
 
 app.use(logger('dev', {}));
 app.use(bodyParser.urlencoded({extended: false}));
