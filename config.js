@@ -16,6 +16,8 @@ module.exports = {
     testbase_key_secret : process.env.TEST_DB_SECRET_KEY,
   
     route_info : [
+      // route_info 에서 쓸 정보라서 파일은 routes 폴더를 기준으로 되어있다.
+
     //   { file : './searchPrice/coinPrice', path : '/api/coinPrice', method : 'coinPriceCommand' , type : 'post'},
     //   { file : './searchPrice/myCoinPrice', path : '/api/myCoinPrice', method : 'myCoinPriceCommand' , type : 'post'},
   
@@ -34,8 +36,11 @@ module.exports = {
     //   { file : './priceNotify/onEventPrice', path : '/api/onEventPrice', method : 'onEventPriceCommand' , type : 'post'},
     //   { file : './priceNotify/onEventPrice', path : '/api/onEventRemoveWallet', method : 'onRemoveWalletCommand' , type : 'post'},
   
-      { file : './ping', path : '/api/getHello', method : 'testGet' , type : 'get'},
+      { file : './ping', path : '/api/getHello', method : 'testGet' , type : 'get'}, // 챗봇서버는 GET 지원안함, 전부 POST
       { file : './ping', path : '/api/sayHello', method : 'testPost1' , type : 'post'},
-      { file : './ping', path : '/api/showHello', method : 'testPost2' , type : 'post'}
+      { file : './ping', path : '/api/showHello', method : 'testPost2' , type : 'post'}, //https://coco-chatbot-b62f09b55eb9.herokuapp.com/api/marketmood
+
+      // 시황
+      { file : './market/mood', path : '/api/marketMood', method : 'marketMoodCommand' , type : 'post'},
     ]
   }

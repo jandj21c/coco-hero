@@ -24,7 +24,7 @@ var route_loader = require('./routes/route_loader');
 //var sequelize = require('./models').sequelize;
 
 //===== 서버 변수 설정 =====//
-const PORT = config.server_port;
+let portNum = config.server_port;
 
 // 익스프레스 객체 생성
 var app = express();
@@ -52,7 +52,7 @@ app.all('*', function(req, res){
   res.status(404).send('<h1>ERROR - Not Found this URL. by Giparang.</h1>');
 });
 
-app.listen(PORT, function() {
+app.listen(portNum, function() {
   console.log('============= 기파랑의 리플 챗봇 서버가 시작되었습니다 ============');
-  console.log('=============      Server is up on port ${PORT}.    ============');
+  console.log(`=============      Server is up on port ${portNum}.    ============`);
 });
