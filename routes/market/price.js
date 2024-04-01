@@ -1,6 +1,6 @@
-var util = require('./util');
+//var util = require('./util');
 
-var cmc		= require('../../exchange/coinmarketcap');
+var cmcAPI		= require('../../exchange/coinmarketcap');
 
 //var majorExchangeArray = ["bithumb","upbit","binance","coinone"];
 //var majorCoinArray = ["btc","eth","xrp","ltc","etc","bch","xmr","qtum","ada","neo","eos","trx","xlm"];
@@ -45,7 +45,9 @@ function initPolling() {
 
 function getCoinPriceInterval() {
 
-    cmc.queryCMCPrice(function (resp) {
+  console.log('======== Get CMC Market Listings Price =========');
+
+  cmcAPI.queryCMCPrice(function (resp) {
         if( resp == null )
             return;
 
@@ -207,15 +209,16 @@ function parseCMCToGeneral(respDATA) {
         coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
         coin.volume_24 = data.quote.USD["volume_24h"];
 
+        console.log(`CMC Listing Data : ${coin.name}`);
+
         this.exchange_cmc.push(coin);
     });
-	
 }
 
 
 module.exports 						= polling_coin_price;
-module.exports.majorCoinArray		= majorCoinArray;
-module.exports.exchangeList 		= exchangeList;
-module.exports.getBithumbPrice 		= getBithumbPrice;
-module.exports.getUpbitPrice 		= getUpbitPrice;
-module.exports.getBinancebPrice 	= getBinancebPrice;
+//module.exports.majorCoinArray		= majorCoinArray;
+//module.exports.exchangeList 		= exchangeList;
+//module.exports.getBithumbPrice 		= getBithumbPrice;
+//module.exports.getUpbitPrice 		= getUpbitPrice;
+//module.exports.getBinancebPrice 	= getBinancebPrice;

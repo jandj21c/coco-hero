@@ -18,6 +18,7 @@
     "express": "^4.19.2",
     "express-error-handler": "^1.1.0",
     "http": "^0.0.1-security",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "request": "^2.88.2"
   }
 }
