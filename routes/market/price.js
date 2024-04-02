@@ -77,6 +77,66 @@ function getCoinPriceInterval() {
     });
 }
 
+var coinPriceCommand = function(req, res) {
+
+  console.log('----------- coinPriceCommand req --------------------');
+  //console.log('----------- coinPriceCommand chat bot server request body -------------');
+  console.log(JSON.stringify(req.body, null, 4));
+
+  //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
+  //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
+  //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
+
+  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
+
+  var coinData;
+  var userWantCoin;
+
+  if ( hasUtterance ) {
+    var utter = req.body.userRequest.utterance; 
+    console.log(`사용자가 요청한  가격 블록의 대화전문: ${utter}`);
+
+    // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
+    userWantCoin = utter.substr(3).trim();
+    console.log(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`);
+  }
+
+  if( util.isEmpty(userWantCoin) == false) {
+
+    console.log('userWantCoin not empty');
+    coinData = parseCoin_Name_Or_Symbol(userWantCoin);
+  }
+
+  console.log('next step');
+
+  if( util.isEmpty(coinData) ) {
+
+    // 알수없는 코인임을 말풍선으로 알려야 한다.
+    responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
+    res.status(200).json(responseBody);
+  }
+  else {
+
+    console.log('CMC 거래소 가격');
+
+    responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
+    console.log(responseBody.data.responseMsg);
+
+    res.status(200).json(responseBody);
+  }
+  return;
+}
+
+var parseCoin_Name_Or_Symbol = function( coinHint ) {
+
+  var matchingCoin = exchange_cmc.filter( (element) =>
+  {
+    return (element.name === coinHint || element.symbol === coinHint)
+  });
+
+  return matchingCoin;
+}
+
 
 function parseGeneralResponseMsg(coinData) {
 
@@ -218,62 +278,6 @@ function parseCMCToGeneral(respDATA) {
 
         this.exchange_cmc.push(coin);
     });
-}
-
-var coinPriceCommand = function(req, res) {
-
-  console.log('----------- coinPriceCommand req --------------------');
-  //console.log('----------- coinPriceCommand chat bot server request body -------------');
-  console.log(JSON.stringify(req.body, null, 4));
-  //console.log('----------- coinPriceCommand chat bot server request end -----------');
-
-  //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
-  //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
-  //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
-
-  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
-
-  var coinData;
-  var userWantCoin;
-
-  if ( hasUtterance ) {
-    var utter = req.body.userRequest.utterance; 
-    console.log(JSON.stringify(`사용자가 요청한  가격 블록의 대화전문: ${utter}`));
-
-    // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
-    userWantCoin = utter.substr(3).trim();
-    console.log(JSON.stringify(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`));
-  }
-
-  if( util.isEmpty(userWantCoin) == false) {
-    coinData = parseCoin_Name_Or_Symbol(userWantCoin);
-  }
-
-  if( util.isEmpty(coinData) ) {
-    // 알수없는 코인임을 말풍선으로 알려야 한다.
-    responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
-    res.status(200).json(responseBody);
-  }
-  else {
-    console.log('CMC 거래소 가격');
-
-    responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
-    console.log(responseBody.data.responseMsg);
-
-    res.status(200).json(responseBody);
-  }
-  return;
-}
-
-var parseCoin_Name_Or_Symbol = function( input ) {
-  let coinData = exchange_cmc.find( (element) =>
-  {
-    if (element.name === input.coinName || element.symbol === input.coinSymbol){
-      return true;
-    }
-  });
-
-  return coinData;
 }
 
 var parseCoinCode = function( input ){
