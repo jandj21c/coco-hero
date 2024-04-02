@@ -225,7 +225,7 @@ var coinPriceCommand = function(req, res) {
 
   console.log('----------- coinPriceCommand req --------------------');
   //console.log('----------- coinPriceCommand chat bot server request body -------------');
-  //console.log(JSON.stringify(req.body, null, 4));
+  console.log(JSON.stringify(req.body, null, 4));
   //console.log('----------- coinPriceCommand chat bot server request end -----------');
 
   //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
