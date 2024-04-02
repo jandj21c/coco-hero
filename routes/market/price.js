@@ -215,7 +215,7 @@ function parseCMCToGeneral(respDATA) {
         coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
         coin.volume_24 = data.quote.USD["volume_24h"];
 
-        console.log(`CMC Listing Data : ${coin.name}`);
+        //console.log(`CMC Listing Data : ${coin.name}`);
 
         this.exchange_cmc.push(coin);
     });
