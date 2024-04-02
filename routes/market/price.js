@@ -52,7 +52,7 @@ function initPolling() {
 	console.log('거래소 코인 시세 폴링 시작');
   getCoinPriceInterval();
 
-	setInterval(getCoinPriceInterval, 30000);
+	setInterval(getCoinPriceInterval, 120000);
 }
 
 function getCoinPriceInterval() {
