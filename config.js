@@ -42,5 +42,8 @@ module.exports = {
 
       // 시황
       { file : './market/mood', path : '/api/marketMood', method : 'marketMoodCommand' , type : 'post'},
+
+      // 가격
+      { file : './market/price', path : '/api/coinPrice', method : 'coinPriceCommand' , type : 'post'}
     ]
   }

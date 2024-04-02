@@ -106,7 +106,7 @@ function parseGeneralResponseMsg(coinData) {
 	//   volume_24 = util.nameWithCommas(Math.floor(volume_24));  // 소수점 버림
   const upperCoinName = coinData.name.toUpperCase();
 
-  var responseMsg = ` ${upperCoinName} 의 현재 가격(빗썸기준)은
+  var responseMsg = ` ${upperCoinName} 의 현재 코인마켓캡 가격은
  ${openPrice} (${fluctateRate}%) 입니다.
 
  심볼 : ${coinData.symbol}
@@ -247,15 +247,12 @@ var coinPriceCommand = function(req, res) {
     //console.log('사용자가 요청한 coin name: '+coinNameObj.origin);
 
     coinData = parseCoin_Name_Or_Symbol(coinNameObj.origin);
-    
   }
   
   if( coinData == undefined ) {
     // 알수없는 코인임을 말풍선으로 알려야 한다.
     responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
     res.status(200).json(responseBody);
-
-    return;
   }
   else {
     console.log('CMC 거래소 가격');
@@ -264,11 +261,8 @@ var coinPriceCommand = function(req, res) {
     console.log(responseBody.data.responseMsg);
 
     res.status(200).json(responseBody);
- 
   }
-  else {
-    res.status(200).json(responseBody);
-  }
+  return;
 }
 
 var parseCoin_Name_Or_Symbol = function( input ) {
@@ -281,6 +275,7 @@ var parseCoin_Name_Or_Symbol = function( input ) {
 
   return coinData;
 }
+
 var parseCoinCode = function( input ){
 
   switch (input) {
@@ -429,15 +424,7 @@ var parseCoinName = function( input ){
 }
 
 
-module.exports.coinPriceCommand = coinPriceCommand;
-module.exports.parseCoinCode = parseCoinCode;
-module.exports.parseCoinName = parseCoinName;
-
 module.exports 						= polling_coin_price;
-//module.exports.majorCoinArray		= majorCoinArray;
-//module.exports.exchangeList 		= exchangeList;
-//module.exports.getBithumbPrice 		= getBithumbPrice;
-//module.exports.getUpbitPrice 		= getUpbitPrice;
-//module.exports.getBinancebPrice 	= getBinancebPrice;
+module.exports.coinPriceCommand = coinPriceCommand;
 
 
