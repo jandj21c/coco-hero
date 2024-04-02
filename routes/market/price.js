@@ -87,12 +87,19 @@ var coinPriceCommand = function(req, res) {
   //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
   //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
 
-  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
+  //var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
+
+  if (req.body.userRequest.utterance === undefined){
+    console.log("no utterance");
+    return;
+  }
 
   var coinData;
   var userWantCoin;
 
-  if ( hasUtterance ) {
+  console.log('----------- coinPriceCommand 111 --------------------');
+
+  {
     var utter = req.body.userRequest.utterance; 
     console.log(`사용자가 요청한  가격 블록의 대화전문: ${utter}`);
 
@@ -101,10 +108,12 @@ var coinPriceCommand = function(req, res) {
     console.log(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`);
   }
 
+  console.log('----------- coinPriceCommand 222 --------------------');
   if( util.isEmpty(userWantCoin) == false) {
 
     console.log('userWantCoin not empty');
     coinData = parseCoin_Name_Or_Symbol(userWantCoin);
+    console.log(`matched CMC coin ${coinData.name}, ${coinData.symbol}`)
   }
 
   console.log('next step');
@@ -129,12 +138,7 @@ var coinPriceCommand = function(req, res) {
 
 var parseCoin_Name_Or_Symbol = function( coinHint ) {
 
-  var matchingCoin = exchange_cmc.filter( (element) =>
-  {
-    return (element.name === coinHint || element.symbol === coinHint)
-  });
-
-  return matchingCoin;
+  return  this.exchange_cmc.filter( (element) => element.name === coinHint || element.symbol === coinHint)
 }
 
 
@@ -280,155 +284,55 @@ function parseCMCToGeneral(respDATA) {
     });
 }
 
-var parseCoinCode = function( input ){
-
-  switch (input) {
-    case 'btc':
-    case 'bitcoin':
-    case '비트코인':
-    case '비코':
-    case '비트':
-      return 'btc';
-
-    case 'xrp':
-    case 'ripple':
-    case '리플':
-    case '리플코인':
-      return 'xrp';
-
-    case 'eth':
-    case '이더리움':
-    case '이더':
-      return 'eth';
-
-    case 'ltc':
-    case '라코':
-    case '라이트코인':
-    case '라이트':
-      return'ltc';
-
-    case 'etc':
-    case '이더리움클래식':
-    case '이더리움 클래식':
-    case '이클':
-      return 'etc';
-
-    case 'bch':
-    case '비코캐':
-    case '비트코인캐시':
-    case '비캐':
-      return 'bch';
-
-    case 'xmr':
-    case '모네로':
-      return 'xmr';
-
-    case 'qtum':
-    case '퀀텀':
-    case '큐텀':
-      return 'qtum';
-
-    case 'ada':
-    case '에이다':
-      return 'ada';
-
-    case 'neo':
-    case '네오':
-      return 'neo';
-
-    case 'eos':
-    case '이오스':
-      return 'eos';
-
-    case 'trx':
-    case '트론':
-      return 'trx';
-
-    case 'xlm':
-    case '스텔라':
-    case '스텔라루멘':
-      return 'xlm';
-
-    default:
-      return 'unknown';
-  }
-}
-
-var parseCoinName = function( input ){
-
-  switch (input) {
-    case 'btc':
-    case 'bitcoin':
-    case '비트코인':
-    case '비코':
-    case '비트':
-      return '비트코인';
-
-    case 'xrp':
-    case 'ripple':
-    case '리플':
-    case '리플코인':
-      return '리플';
-
-    case 'eth':
-    case '이더리움':
-    case '이더':
-      return '이더리움';
-
-    case 'ltc':
-    case '라이트코인':
-    case '라이트':
-      return'라이트코인';
-
-    case 'etc':
-    case '이더리움클래식':
-    case '이더리움 클래식':
-    case '이클':
-      return '이더리움클래식';
-
-    case 'bch':
-    case '비코캐':
-    case '비트코인캐시':
-    case '비캐':
-      return '비트코인캐시';
-
-    case 'xmr':
-    case '모네로':
-      return '모네로';
-
-    case 'qtum':
-    case '퀀텀':
-    case '큐텀':
-      return '퀀텀';
-
-    case 'ada':
-    case '에이다':
-      return 'ada';
-
-    case 'neo':
-    case '네오':
-      return '네오';
-
-    case 'eos':
-    case '이오스':
-      return '이오스';
-
-    case 'trx':
-    case '트론':
-      return '트론';
-
-    case 'xlm':
-    case '스텔라':
-    case '스텔라루멘':
-      return '스텔라루멘';
-
-    default:
-      return 'unknown';
-  }
-}
-
-
 module.exports 						= polling_coin_price;
 module.exports.coinPriceCommand = coinPriceCommand;
 
-
+// http://localhost:3000/api/coinPrice
+/* 사용자 "가격블록" request 샘플
+{
+  "bot": {
+      "id": "66066c7dd954a304f009a28e",
+      "name": "코인봇"
+  },
+  "intent": {
+      "id": "660bab2f691ba24f6cd0fda5",
+      "name": "가격",
+      "extra": {
+          "reason": {
+              "code": 1,
+              "message": "OK"
+          }
+      }
+  },
+  "action": {
+      "id": "660bac6e1623006a29288627",
+      "name": "코인가격 스킬",
+      "params": {},
+      "detailParams": {},
+      "clientExtra": {}
+  },
+  "userRequest": {
+      "block": {
+          "id": "660bab2f691ba24f6cd0fda5",
+          "name": "가격"
+      },
+      "user": {
+          "id": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d"
+          "type": "botUserKey",
+          "properties": {
+              "botUserKey": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46
+              "isFriend": true,
+              "plusfriendUserKey": "Ge9E5OHpsO6L",
+              "bot_user_key": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c
+              "plusfriend_user_key": "Ge9E5OHpsO6L"
+          }
+      },
+      "utterance": "!가격 btc",
+      "params": {
+          "surface": "Kakaotalk.plusfriend"
+      },
+      "lang": "ko",
+      "timezone": "Asia/Seoul"
+  },
+  "contexts": []
+}*/
