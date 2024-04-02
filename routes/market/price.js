@@ -1,6 +1,5 @@
-//var util = require('./util');
-
-var cmcAPI		= require('../../exchange/coinmarketcap');
+var util = require('../../util');
+var cmcAPI = require('../../exchange/coinmarketcap');
 
 //var majorExchangeArray = ["bithumb","upbit","binance","coinone"];
 //var majorCoinArray = ["btc","eth","xrp","ltc","etc","bch","xmr","qtum","ada","neo","eos","trx","xlm"];
@@ -229,27 +228,28 @@ var coinPriceCommand = function(req, res) {
   //console.log('----------- coinPriceCommand chat bot server request end -----------');
 
   //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
-  var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
-  var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
+  //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
+  //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
 
-  var queryCoinType;
-  var coinName;
+  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
+
   var coinData;
+  var userWantCoin;
 
-  if ( hasCoinNameContext ) {
-    var coinContextObj = req.body.action.detailParams.coinNameContext;
-    //console.log('사용자가 요청한 coin context name: '+coinContextObj.origin);
+  if ( hasUtterance ) {
+    var utter = req.body.userRequest.utterance; 
+    console.log(JSON.stringify(`사용자가 요청한  가격 블록의 대화전문: ${utter}`));
 
-    coinData = parseCoin_Name_Or_Symbol(coinContextObj.origin);
+    // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
+    userWantCoin = utter.substr(3).trim();
+    console.log(JSON.stringify(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`));
   }
-  else if ( hasName ) {
-    var coinNameObj = req.body.action.detailParams.sysCoinName;
-    //console.log('사용자가 요청한 coin name: '+coinNameObj.origin);
 
-    coinData = parseCoin_Name_Or_Symbol(coinNameObj.origin);
+  if( util.isEmpty(userWantCoin) == false) {
+    coinData = parseCoin_Name_Or_Symbol(userWantCoin);
   }
-  
-  if( coinData == undefined ) {
+
+  if( util.isEmpty(coinData) ) {
     // 알수없는 코인임을 말풍선으로 알려야 한다.
     responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
     res.status(200).json(responseBody);
