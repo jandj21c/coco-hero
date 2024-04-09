@@ -33,6 +33,7 @@ var queryCMCPrice = function (callback) {
 			//'X-CMC_PRO_API_KEY': '952dd564-05e3-420a-8674-6a178fea19c9',
 		},
 		uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=100',
+
 		method: 'GET'
 	};
 

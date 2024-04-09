@@ -51,8 +51,7 @@ function initPolling() {
 
 	console.log('거래소 코인 시세 폴링 시작');
   getCoinPriceInterval();
-
-	//setInterval(getCoinPriceInterval, 300000); //5분
+	//setInterval(getCoinPriceInterval, 120000);
 }
 
 // CMC 코인 가격 폴링
@@ -76,72 +75,6 @@ function getCoinPriceInterval() {
 
         console.log(`코인마켓캡 거래소 /listings/latest 데이터 개수 ${this.exchange_cmc.length}`);
     });
-}
-
-// 
-var coinPriceCommand = function(req, res) {
-
-  console.log('----------- coinPriceCommand req --------------------');
-  //console.log('----------- coinPriceCommand chat bot server request body -------------');
-  //console.log(JSON.stringify(req.body, null, 4));
-  //console.log('----------- coinPriceCommand chat bot server request end -----------');
-
-  //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
-  //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
-  //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
-  console.log('-----');
-
-  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
-
-  var coinData;
-  var userWantCoin;
-
-  if ( hasUtterance ) {
-    var utter = req.body.userRequest.utterance; 
-    console.log(`사용자가 요청한  가격 블록의 대화전문: ${utter}`);
-
-    // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
-    userWantCoin = utter.substr(3).trim();
-    console.log(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`);
-  }
-
-  //if( util.isEmpty(userWantCoin) == false ) {
-
-    console.log("CMC 리스트에서 코인정보 찾기");
-    coinData = parseCoin_Name_Or_Symbol(userWantCoin);
-
-    console.log(`결과 : ${coinData.name}, ${coinData.symbol}`);
-  //}
-
-  if( util.isEmpty(coinData) ) {
-
-    console.log('가격 정보 : 등록되지 않는 코인');
-    // 알수없는 코인임을 말풍선으로 알려야 한다.
-    responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
-    res.status(200).json(responseBody);
-  }
-  else {
-
-    console.log('CMC 거래소 가격');
-
-    responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
-    console.log(responseBody.data.responseMsg);
-
-    res.status(200).json(responseBody);
-  }
-
-  return;
-}
-
-var parseCoin_Name_Or_Symbol = function( input ) {
-  let coinData = exchange_cmc.find( (element) =>
-  {
-    if (element.name === input.coinName || element.symbol === input.coinSymbol){
-      return true;
-    }
-  });
-
-  return coinData;
 }
 
 
@@ -341,11 +274,14 @@ var coinPriceCommand = function(req, res) {
 }
 
 var parseCoin_Name_Or_Symbol = function( input ) {
-
-  return exchange_cmc.filter( (element) =>
+  let coinData = exchange_cmc.find( (element) =>
   {
-    return (element.name === input || element.symbol === input);
+    if (element.name === input.coinName || element.symbol === input.coinSymbol){
+      return true;
+    }
   });
+
+  return coinData;
 }
 
 var parseCoinCode = function( input ){
@@ -499,52 +435,4 @@ var parseCoinName = function( input ){
 module.exports 						= polling_coin_price;
 module.exports.coinPriceCommand = coinPriceCommand;
 
-/* http://localhost:3000/api/coinPrice 요청에 대한 request 샘플
-{
-  "bot": {
-      "id": "66066c7dd954a304f009a28e",
-      "name": "코인봇"
-  },
-  "intent": {
-      "id": "660bab2f691ba24f6cd0fda5",
-      "name": "가격",
-      "extra": {
-          "reason": {
-              "code": 1,
-              "message": "OK"
-          }
-      }
-  },
-  "action": {
-      "id": "660bac6e1623006a29288627",
-      "name": "코인가격 스킬",
-      "params": {},
-      "detailParams": {},
-      "clientExtra": {}
-  },
-  "userRequest": {
-      "block": {
-          "id": "660bab2f691ba24f6cd0fda5",
-          "name": "가격"
-      },
-      "user": {
-          "id": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
-          "type": "botUserKey",
-          "properties": {
-              "botUserKey": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
-              "isFriend": true,
-              "plusfriendUserKey": "Ge9E5OHpsO6L",
-              "bot_user_key": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
-              "plusfriend_user_key": "Ge9E5OHpsO6L"
-          }
-      },
-      "utterance": "!가격 btc",
-      "params": {
-          "surface": "Kakaotalk.plusfriend"
-      },
-      "lang": "ko",
-      "timezone": "Asia/Seoul"
-  },
-  "contexts": []
-}
-*/
+
