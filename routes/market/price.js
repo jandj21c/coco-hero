@@ -83,22 +83,15 @@ function parseCMCToGeneral(respDATA) {
 
       var coin = new coinPriceSpec(data["id"]);
       coin.name = data["name"].toLowerCase();
-      console.log(coin.name);
-
       coin.symbol = data["symbol"].toLowerCase();
       coin.currentPrice = data.quote.USD["price"]; //현재가
       coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
       coin.volume_24 = data.quote.USD["volume_24h"];
 
-      console.log(`CMC Listing Data : ${coin.name}`);
+      //console.log(`CMC Listing Data : ${coin.name}`);
 
       exchange_cmc.push(coin);
   });
-
-  exchange_cmc.forEach( (ele) => 
-    {
-      console.log(ele.name);
-    });
 }
 
 var coinPriceCommand = function(req, res) {
@@ -140,7 +133,7 @@ var coinPriceCommand = function(req, res) {
     console.log('CMC 거래소 가격');
 
     responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
-    console.log(responseBody.data.responseMsg);
+    //console.log(responseBody.data.responseMsg);
 
     res.status(200).json(responseBody);
   }
