@@ -11,17 +11,14 @@ var cmcAPI = require('../../exchange/coinmarketcap');
 // var binance = {};
 var exchange_cmc = [];
 
-//const quoteUSD = 1137;
+function coinPriceSpec(id) {
 
-var coinPriceSpec = {
-
-  id : 0,
-	name : 'undefined',
-  symbol : 'undefined',
-	currentPrice : '0',
-	fluctate_rate_24 : '0',
-	volume_24 : '0'
-
+  this.id = id;
+	this.name = 'undefined';
+  this.symbol = 'undefined';
+	this.currentPrice = '0';
+	this.fluctate_rate_24 = '0';
+	this.volume_24 = '0'
 };
 
 var responseBody = {
@@ -44,14 +41,14 @@ polling_coin_price.init = function() {
 };
 
 function initExchange() {
-    this.exchange_cmc = [];
+    exchange_cmc = [];
 }
 
 function initPolling() {
 
 	console.log('거래소 코인 시세 폴링 시작');
   getCoinPriceInterval();
-	//setInterval(getCoinPriceInterval, 120000);
+	setInterval(getCoinPriceInterval, 300000);
 }
 
 // CMC 코인 가격 폴링
@@ -73,10 +70,92 @@ function getCoinPriceInterval() {
 
         parseCMCToGeneral(respJson.data);
 
-        console.log(`코인마켓캡 거래소 /listings/latest 데이터 개수 ${this.exchange_cmc.length}`);
+        console.log(`코인마켓캡 거래소 /listings/latest 데이터 개수 ${exchange_cmc.length}`);
     });
 }
 
+// 코인리스트 나열시 말풍선
+function parseCMCToGeneral(respDATA) {
+
+  exchange_cmc = [];
+
+  respDATA.forEach((data)=>{
+
+      var coin = new coinPriceSpec(data["id"]);
+      coin.name = data["name"].toLowerCase();
+      console.log(coin.name);
+
+      coin.symbol = data["symbol"].toLowerCase();
+      coin.currentPrice = data.quote.USD["price"]; //현재가
+      coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
+      coin.volume_24 = data.quote.USD["volume_24h"];
+
+      console.log(`CMC Listing Data : ${coin.name}`);
+
+      exchange_cmc.push(coin);
+  });
+
+  exchange_cmc.forEach( (ele) => 
+    {
+      console.log(ele.name);
+    });
+}
+
+var coinPriceCommand = function(req, res) {
+
+  console.log('----------- coinPriceCommand req --------------------');
+  //console.log('----------- coinPriceCommand chat bot server request body -------------');
+  console.log(JSON.stringify(req.body, null, 4));
+  //console.log('----------- coinPriceCommand chat bot server request end -----------');
+
+  //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
+  //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
+  //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
+
+  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
+
+  var coinData;
+  var userWantCoin;
+
+  if ( hasUtterance ) {
+    var utter = req.body.userRequest.utterance; 
+    console.log(JSON.stringify(`사용자가 요청한  가격 블록의 대화전문: ${utter}`));
+
+    // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
+    userWantCoin = utter.substr(3).trim();
+    console.log(JSON.stringify(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`));
+  }
+
+  if( util.isEmpty(userWantCoin) == false) {
+    coinData = parseCoin_Name_Or_Symbol(userWantCoin);
+  }
+
+  if( util.isEmpty(coinData) ) {
+
+    // 알수없는 코인임을 말풍선으로 알려야 한다.
+    responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
+    res.status(200).json(responseBody);
+  }
+  else {
+    console.log('CMC 거래소 가격');
+
+    responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
+    console.log(responseBody.data.responseMsg);
+
+    res.status(200).json(responseBody);
+  }
+  return;
+}
+
+var parseCoin_Name_Or_Symbol = function( input ) {
+
+  let coinData = exchange_cmc.find( (element) =>
+    {
+      return (element.name === input || element.symbol === input)
+    });
+
+  return coinData;
+}
 
 function parseGeneralResponseMsg(coinData) {
 
@@ -197,92 +276,6 @@ var getBinancebPrice = function(coinName, forCarousel) {
 // 	return parseGeneralResponseMsg(exchangeList['coinone'].coinList[coinName]);
 // };
 
-
-// 코인리스트 나열시 말풍선
-function parseCMCToGeneral(respDATA) {
-
-    this.exchange_cmc = [];
-
-    respDATA.forEach((data)=>{
-
-        var coin = coinPriceSpec;
-        
-        var namelog =  data["name"].toLowerCase();
-        
-        coin.name = data["name"].toLowerCase();
-        console.log(coin.name);
-        coin.symbol = data["symbol"].toLowerCase();
-        coin.id = data["id"];
-        coin.currentPrice = data.quote.USD["price"]; //현재가
-        coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
-        coin.volume_24 = data.quote.USD["volume_24h"];
-
-        console.log(`CMC Listing Data : ${coin.name}`);
-
-        this.exchange_cmc.push(coin);
-    });
-
-    this.exchange_cmc.forEach( (data) => 
-        {
-          console.log(data.name);
-        });
-}
-
-var coinPriceCommand = function(req, res) {
-
-  console.log('----------- coinPriceCommand req --------------------');
-  //console.log('----------- coinPriceCommand chat bot server request body -------------');
-  console.log(JSON.stringify(req.body, null, 4));
-  //console.log('----------- coinPriceCommand chat bot server request end -----------');
-
-  //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
-  //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
-  //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
-
-  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
-
-  var coinData;
-  var userWantCoin;
-
-  if ( hasUtterance ) {
-    var utter = req.body.userRequest.utterance; 
-    console.log(JSON.stringify(`사용자가 요청한  가격 블록의 대화전문: ${utter}`));
-
-    // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
-    userWantCoin = utter.substr(3).trim();
-    console.log(JSON.stringify(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`));
-  }
-
-  if( util.isEmpty(userWantCoin) == false) {
-    coinData = parseCoin_Name_Or_Symbol(userWantCoin);
-  }
-
-  if( util.isEmpty(coinData) ) {
-    // 알수없는 코인임을 말풍선으로 알려야 한다.
-    responseBody.data.responseMsg = '현재 등록되지 않은 코인 정보 입니다'
-    res.status(200).json(responseBody);
-  }
-  else {
-    console.log('CMC 거래소 가격');
-
-    responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
-    console.log(responseBody.data.responseMsg);
-
-    res.status(200).json(responseBody);
-  }
-  return;
-}
-
-var parseCoin_Name_Or_Symbol = function( input ) {
-  let coinData = exchange_cmc.find( (element) =>
-  {
-    if (element.name === input.coinName || element.symbol === input.coinSymbol){
-      return true;
-    }
-  });
-
-  return coinData;
-}
 
 var parseCoinCode = function( input ){
 
