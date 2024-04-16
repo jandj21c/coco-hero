@@ -1,5 +1,7 @@
 var util = require('../../util');
 var cmcAPI = require('../../exchange/coinmarketcap');
+const textToImage = require('text-to-image');
+const path = require('path');
 
 //var majorExchangeArray = ["bithumb","upbit","binance","coinone"];
 //var majorCoinArray = ["btc","eth","xrp","ltc","etc","bch","xmr","qtum","ada","neo","eos","trx","xlm"];
@@ -9,6 +11,8 @@ var cmcAPI = require('../../exchange/coinmarketcap');
 // var bithumb = {};
 // var upbit = {};
 // var binance = {};
+
+var fileNameCount = 0;
 var exchange_cmc = [];
 
 function coinPriceSpec(id) {
@@ -132,12 +136,35 @@ var coinPriceCommand = function(req, res) {
   else {
     console.log('CMC 거래소 가격');
 
+    console.log('2222');
+    var fileName = 'debug_file_'+fileNameCount.toString()+'.png'; 
+    //const fileName = 'debug_file_'+`${fileNameCount}`+'.png';
+
+    console.log(fileName);
+    console.log('3333');
+    const dataUri = parseImageResponseMsg(coinData, fileName);
+
     responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
     //console.log(responseBody.data.responseMsg);
 
     res.status(200).json(responseBody);
+    //deleteImageFile(fileName);
   }
   return;
+}
+
+var deleteImageFile = function(fileName) {
+  try {
+
+    //동기 방식으로 파일 삭제
+      fs.unlinkSync(`./priceImage/${fileName}`)
+  
+  } catch (error) {
+  
+      if(err.code == 'ENOENT'){
+          console.log("파일 삭제 Error 발생");
+      }
+  }
 }
 
 var parseCoin_Name_Or_Symbol = function( input ) {
@@ -150,9 +177,60 @@ var parseCoin_Name_Or_Symbol = function( input ) {
   return coinData;
 }
 
+async function parseImageResponseMsg(coinData, fileName) {
+
+  // 배경 
+  // HEX : 35bcd5, 
+  // rgb(53, 188, 213)
+  // hsl(189, 66%, 52%)
+  var openPrice = Math.round(coinData.currentPrice * 100) /100; // 소수점 두자리 반올림
+  if( openPrice > 0 ) {
+    openPrice = util.nameWithCommas(openPrice);
+  }
+  openPrice = openPrice+'달러';
+
+  const upperCoinName = coinData.name.toUpperCase();
+
+  var fluctateRate = Math.round(coinData.fluctate_rate_24 * 100) /100; // 소수점 두자리 반올림
+  if( fluctateRate > 0){
+    fluctateRate = '🔺+' +fluctateRate;
+  }
+	else {
+		fluctateRate = '💧' +fluctateRate;
+	}
+
+  var volume_24 = coinData.volume_24;
+
+    var responseMsg = `${upperCoinName} 거래소 가격
+\n가격: ${openPrice}
+\n변동율: ${fluctateRate}% `;
+
+    // using the asynchronous API with await
+    return await textToImage.generate(responseMsg, {
+      debug: true,
+      debugFilename: path.join('priceImage', fileName),
+      margin: 5,
+      fontSize: 23,
+      fontFamily:'sans-serif',
+      maxWidth: 250,
+      bgColor: '#35bcd5',
+      textColor: 'white',
+      textAlign:'center',
+      verticalAlign: 'center'
+    });
+
+    // using the asynchronous API with .then
+    // textToImage.generate('Lorem ipsum dolor sit amet').then(function (dataUri) {
+    //   // use the dataUri
+    // });
+
+    // using the synchronous API
+    //const dataUri = textToImage.generateSync('Lorem ipsum dolor sit amet');
+}
+
 function parseGeneralResponseMsg(coinData) {
 
-	console.log(coinData);
+	//console.log(coinData);
  
 	var openPrice = coinData.currentPrice;
   if( openPrice > 0 ) {
@@ -160,7 +238,7 @@ function parseGeneralResponseMsg(coinData) {
   }
   openPrice = openPrice+'달러';
 
-  var fluctateRate = coinData.fluctate_rate_24;
+  var fluctateRate = Math.round(coinData.fluctate_rate_24 * 100) /100; // 소수점 두자리 반올림
   if( fluctateRate > 0){
     fluctateRate = '🔺+' +fluctateRate;
   }

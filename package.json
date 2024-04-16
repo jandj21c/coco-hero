@@ -19,6 +19,7 @@
     "express-error-handler": "^1.1.0",
     "http": "^0.0.1-security",
     "morgan": "^1.10.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "text-to-image": "^5.2.0"
   }
 }
