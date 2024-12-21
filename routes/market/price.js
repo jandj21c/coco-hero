@@ -9,7 +9,7 @@ var cmcAPI = require('../../exchange/coinmarketcap');
 // var bithumb = {};
 // var upbit = {};
 // var binance = {};
-var exchange_cmc = {}
+var exchange_cmc = [];
 
 //const quoteUSD = 1137;
 
@@ -44,7 +44,7 @@ polling_coin_price.init = function() {
 };
 
 function initExchange() {
-    this.exchange_cmc = new Array();
+    this.exchange_cmc = [];
 }
 
 function initPolling() {
@@ -138,7 +138,19 @@ var coinPriceCommand = function(req, res) {
 
 var parseCoin_Name_Or_Symbol = function( coinHint ) {
 
-  return  this.exchange_cmc.filter( (element) => element.name === coinHint || element.symbol === coinHint)
+  // exchange_cmc.forEach((data) => {
+  //   data.
+  // }
+
+  console.log(exchange_cmc);
+
+  const matchData = this.exchange_cmc.filter( element => {
+    //console.log(element);
+    
+    element.name === coinHint || element.symbol === coinHint
+  });
+
+  //console.log(matchData);
 }
 
 
@@ -265,7 +277,9 @@ var getBinancebPrice = function(coinName, forCarousel) {
 // 코인리스트 나열시 말풍선
 function parseCMCToGeneral(respDATA) {
 
-    this.exchange_cmc = [];
+    //this.exchange_cmc = [];
+
+    var cmcCoins = [];
 
     respDATA.forEach((data)=>{
 
@@ -280,8 +294,23 @@ function parseCMCToGeneral(respDATA) {
 
         //console.log(`CMC Listing Data : ${coin.name}`);
 
-        this.exchange_cmc.push(coin);
+        //console.log(coin);
+        cmcCoins.push(coin);
     });
+
+    this.exchange_cmc = cmcCoins;
+
+    console.log("exchange_cmc content start");
+
+    for(let i = 0; i < cmcCoins.length; i++){
+      console.log(cmcCoins[i]);
+    }
+    // this.exchange_cmc.forEach( (imte) =>
+    // {
+    //   console.log(imte);
+    // })
+    
+    console.log("exchange_cmc content end");
 }
 
 module.exports 						= polling_coin_price;
@@ -290,49 +319,49 @@ module.exports.coinPriceCommand = coinPriceCommand;
 // http://localhost:3000/api/coinPrice
 /* 사용자 "가격블록" request 샘플
 {
-  "bot": {
-      "id": "66066c7dd954a304f009a28e",
-      "name": "코인봇"
-  },
-  "intent": {
-      "id": "660bab2f691ba24f6cd0fda5",
-      "name": "가격",
-      "extra": {
-          "reason": {
-              "code": 1,
-              "message": "OK"
-          }
-      }
-  },
-  "action": {
-      "id": "660bac6e1623006a29288627",
-      "name": "코인가격 스킬",
-      "params": {},
-      "detailParams": {},
-      "clientExtra": {}
-  },
-  "userRequest": {
-      "block": {
-          "id": "660bab2f691ba24f6cd0fda5",
-          "name": "가격"
-      },
-      "user": {
-          "id": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d"
-          "type": "botUserKey",
-          "properties": {
-              "botUserKey": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46
-              "isFriend": true,
-              "plusfriendUserKey": "Ge9E5OHpsO6L",
-              "bot_user_key": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c
-              "plusfriend_user_key": "Ge9E5OHpsO6L"
-          }
-      },
-      "utterance": "!가격 btc",
-      "params": {
-          "surface": "Kakaotalk.plusfriend"
-      },
-      "lang": "ko",
-      "timezone": "Asia/Seoul"
-  },
-  "contexts": []
+    "bot": {
+        "id": "66066c7dd954a304f009a28e",
+        "name": "코인봇"
+    },
+    "intent": {
+        "id": "660bab2f691ba24f6cd0fda5",
+        "name": "가격",
+        "extra": {
+            "reason": {
+                "code": 1,
+                "message": "OK"
+            }
+        }
+    },
+    "action": {
+        "id": "660bac6e1623006a29288627",
+        "name": "코인가격 스킬",
+        "params": {},
+        "detailParams": {},
+        "clientExtra": {}
+    },
+    "userRequest": {
+        "block": {
+            "id": "660bab2f691ba24f6cd0fda5",
+            "name": "가격"
+        },
+        "user": {
+            "id": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
+            "type": "botUserKey",
+            "properties": {
+                "botUserKey": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
+                "isFriend": true,
+                "plusfriendUserKey": "Ge9E5OHpsO6L",
+                "bot_user_key": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
+                "plusfriend_user_key": "Ge9E5OHpsO6L"
+            }
+        },
+        "utterance": "!가격 btc",
+        "params": {
+            "surface": "Kakaotalk.plusfriend"
+        },
+        "lang": "ko",
+        "timezone": "Asia/Seoul"
+    },
+    "contexts": []
 }*/

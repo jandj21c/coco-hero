@@ -18,7 +18,8 @@ var config = require('./config');
 var route_loader = require('./routes/route_loader');
 
 // 거래소 폴링 시작
-var polling_coin_price = require('./routes/market/price');
+//var polling_coin_price = require('./routes/market/price');
+var exchange = require('./routes/market/wsPrice');
 //var notify = require('./AlimCenter/priceNotifier');
 
 //var sequelize = require('./models').sequelize;
@@ -35,7 +36,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 route_loader.init(app, express.Router());
-polling_coin_price.init();
+exchange.initExchange();
+
 //notify.eventReadyPriceNotify();
 
 // unexpected error handlder

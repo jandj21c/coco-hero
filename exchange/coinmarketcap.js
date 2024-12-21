@@ -32,7 +32,7 @@ var queryCMCPrice = function (callback) {
 			'X-CMC_PRO_API_KEY': 'a7ee27df-e9af-4165-8a17-6f9f8f4033e7' //a7ee27df-e9af-4165-8a17-6f9f8f4033e7 (졔) 952dd564-05e3-420a-8674-6a178fea19c9 (쭌)
 			//'X-CMC_PRO_API_KEY': '952dd564-05e3-420a-8674-6a178fea19c9'
 		},
-		uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=500',
+		uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=50',
 		method: 'GET'
 	};
 
@@ -40,7 +40,7 @@ var queryCMCPrice = function (callback) {
 	request(options, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 			res = body;
-			//console.log(res);
+			console.log(res);
 		}
 		else {
 			console.log("CMC Listing API request failed");
