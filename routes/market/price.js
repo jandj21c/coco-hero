@@ -1,5 +1,7 @@
 var util = require('../../util');
 var cmcAPI = require('../../exchange/coinmarketcap');
+const textToImage = require('text-to-image');
+const path = require('path');
 
 //var majorExchangeArray = ["bithumb","upbit","binance","coinone"];
 //var majorCoinArray = ["btc","eth","xrp","ltc","etc","bch","xmr","qtum","ada","neo","eos","trx","xlm"];
@@ -9,19 +11,19 @@ var cmcAPI = require('../../exchange/coinmarketcap');
 // var bithumb = {};
 // var upbit = {};
 // var binance = {};
+
+var exchange_cmc = [];
+var fileNameCount = 0;
 var exchange_cmc = [];
 
-//const quoteUSD = 1137;
+function coinPriceSpec(id) {
 
-var coinPriceSpec = {
-
-  id : 0,
-	name : 'undefined',
-  symbol : 'undefined',
-	currentPrice : '0',
-	fluctate_rate_24 : '0',
-	volume_24 : '0'
-
+  this.id = id;
+	this.name = 'undefined';
+  this.symbol = 'undefined';
+	this.currentPrice = '0';
+	this.fluctate_rate_24 = '0';
+	this.volume_24 = '0'
 };
 
 var responseBody = {
@@ -44,17 +46,17 @@ polling_coin_price.init = function() {
 };
 
 function initExchange() {
-    this.exchange_cmc = [];
+    exchange_cmc = [];
 }
 
 function initPolling() {
 
 	console.log('거래소 코인 시세 폴링 시작');
   getCoinPriceInterval();
-
-	//setInterval(getCoinPriceInterval, 120000);
+	setInterval(getCoinPriceInterval, 300000);
 }
 
+// CMC 코인 가격 폴링
 function getCoinPriceInterval() {
 
   console.log('======== Get CMC Market Listings Price =========');
@@ -73,8 +75,28 @@ function getCoinPriceInterval() {
 
         parseCMCToGeneral(respJson.data);
 
-        console.log(`코인마켓캡 거래소 /listings/latest 데이터 개수 ${this.exchange_cmc.length}`);
+        console.log(`코인마켓캡 거래소 /listings/latest 데이터 개수 ${exchange_cmc.length}`);
     });
+}
+
+// 코인리스트 나열시 말풍선
+function parseCMCToGeneral(respDATA) {
+
+  exchange_cmc = [];
+
+  respDATA.forEach((data)=>{
+
+      var coin = new coinPriceSpec(data["id"]);
+      coin.name = data["name"].toLowerCase();
+      coin.symbol = data["symbol"].toLowerCase();
+      coin.currentPrice = data.quote.USD["price"]; //현재가
+      coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
+      coin.volume_24 = data.quote.USD["volume_24h"];
+
+      //console.log(`CMC Listing Data : ${coin.name}`);
+
+      exchange_cmc.push(coin);
+  });
 }
 
 var coinPriceCommand = function(req, res) {
@@ -82,41 +104,29 @@ var coinPriceCommand = function(req, res) {
   console.log('----------- coinPriceCommand req --------------------');
   //console.log('----------- coinPriceCommand chat bot server request body -------------');
   console.log(JSON.stringify(req.body, null, 4));
+  //console.log('----------- coinPriceCommand chat bot server request end -----------');
 
   //var hasCode    = req.body.action.detailParams.hasOwnProperty('sysCoinCode');
   //var hasName             = req.body.action.detailParams.hasOwnProperty('sysCoinName');
   //var hasCoinNameContext  = req.body.action.detailParams.hasOwnProperty('coinNameContext');
 
-  //var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
-
-  if (req.body.userRequest.utterance === undefined){
-    console.log("no utterance");
-    return;
-  }
+  var hasUtterance  = req.body.userRequest.hasOwnProperty('utterance');
 
   var coinData;
   var userWantCoin;
 
-  console.log('----------- coinPriceCommand 111 --------------------');
-
-  {
+  if ( hasUtterance ) {
     var utter = req.body.userRequest.utterance; 
-    console.log(`사용자가 요청한  가격 블록의 대화전문: ${utter}`);
+    console.log(JSON.stringify(`사용자가 요청한  가격 블록의 대화전문: ${utter}`));
 
     // 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
     userWantCoin = utter.substr(3).trim();
-    console.log(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`);
+    console.log(JSON.stringify(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`));
   }
 
-  console.log('----------- coinPriceCommand 222 --------------------');
   if( util.isEmpty(userWantCoin) == false) {
-
-    console.log('userWantCoin not empty');
     coinData = parseCoin_Name_Or_Symbol(userWantCoin);
-    console.log(`matched CMC coin ${coinData.name}, ${coinData.symbol}`)
   }
-
-  console.log('next step');
 
   if( util.isEmpty(coinData) ) {
 
@@ -125,38 +135,103 @@ var coinPriceCommand = function(req, res) {
     res.status(200).json(responseBody);
   }
   else {
-
     console.log('CMC 거래소 가격');
 
+    console.log('2222');
+    var fileName = 'debug_file_'+fileNameCount.toString()+'.png'; 
+    //const fileName = 'debug_file_'+`${fileNameCount}`+'.png';
+
+    console.log(fileName);
+    console.log('3333');
+    const dataUri = parseImageResponseMsg(coinData, fileName);
+
     responseBody.data.responseMsg = parseGeneralResponseMsg(coinData);
-    console.log(responseBody.data.responseMsg);
+    //console.log(responseBody.data.responseMsg);
 
     res.status(200).json(responseBody);
+    //deleteImageFile(fileName);
   }
   return;
 }
 
-var parseCoin_Name_Or_Symbol = function( coinHint ) {
+var deleteImageFile = function(fileName) {
+  try {
 
-  // exchange_cmc.forEach((data) => {
-  //   data.
-  // }
-
-  console.log(exchange_cmc);
-
-  const matchData = this.exchange_cmc.filter( element => {
-    //console.log(element);
-    
-    element.name === coinHint || element.symbol === coinHint
-  });
-
-  //console.log(matchData);
+    //동기 방식으로 파일 삭제
+      fs.unlinkSync(`./priceImage/${fileName}`)
+  
+  } catch (error) {
+  
+      if(err.code == 'ENOENT'){
+          console.log("파일 삭제 Error 발생");
+      }
+  }
 }
 
+var parseCoin_Name_Or_Symbol = function( input ) {
+
+  let coinData = exchange_cmc.find( (element) =>
+    {
+      return (element.name === input || element.symbol === input)
+    });
+
+  return coinData;
+}
+
+async function parseImageResponseMsg(coinData, fileName) {
+
+  // 배경 
+  // HEX : 35bcd5, 
+  // rgb(53, 188, 213)
+  // hsl(189, 66%, 52%)
+  var openPrice = Math.round(coinData.currentPrice * 100) /100; // 소수점 두자리 반올림
+  if( openPrice > 0 ) {
+    openPrice = util.nameWithCommas(openPrice);
+  }
+  openPrice = openPrice+'달러';
+
+  const upperCoinName = coinData.name.toUpperCase();
+
+  var fluctateRate = Math.round(coinData.fluctate_rate_24 * 100) /100; // 소수점 두자리 반올림
+  if( fluctateRate > 0){
+    fluctateRate = '🔺+' +fluctateRate;
+  }
+	else {
+		fluctateRate = '💧' +fluctateRate;
+	}
+
+  var volume_24 = coinData.volume_24;
+
+    var responseMsg = `${upperCoinName} 거래소 가격
+\n가격: ${openPrice}
+\n변동율: ${fluctateRate}% `;
+
+    // using the asynchronous API with await
+    return await textToImage.generate(responseMsg, {
+      debug: true,
+      debugFilename: path.join('priceImage', fileName),
+      margin: 5,
+      fontSize: 23,
+      fontFamily:'sans-serif',
+      maxWidth: 250,
+      bgColor: '#35bcd5',
+      textColor: 'white',
+      textAlign:'center',
+      verticalAlign: 'center'
+    });
+
+    // using the asynchronous API with .then
+    // textToImage.generate('Lorem ipsum dolor sit amet').then(function (dataUri) {
+    //   // use the dataUri
+    // });
+
+    // using the synchronous API
+    //const dataUri = textToImage.generateSync('Lorem ipsum dolor sit amet');
+}
 
 function parseGeneralResponseMsg(coinData) {
 
-	console.log(coinData);
+	//console.log(coinData);
  
 	var openPrice = coinData.currentPrice;
   if( openPrice > 0 ) {
@@ -164,7 +239,7 @@ function parseGeneralResponseMsg(coinData) {
   }
   openPrice = openPrice+'달러';
 
-  var fluctateRate = coinData.fluctate_rate_24;
+  var fluctateRate = Math.round(coinData.fluctate_rate_24 * 100) /100; // 소수점 두자리 반올림
   if( fluctateRate > 0){
     fluctateRate = '🔺+' +fluctateRate;
   }
@@ -274,94 +349,80 @@ var getBinancebPrice = function(coinName, forCarousel) {
 // };
 
 
-// 코인리스트 나열시 말풍선
-function parseCMCToGeneral(respDATA) {
 
-    //this.exchange_cmc = [];
+var parseCoinName = function( input ){
 
-    var cmcCoins = [];
+  switch (input) {
+    case 'btc':
+    case 'bitcoin':
+    case '비트코인':
+    case '비코':
+    case '비트':
+      return '비트코인';
 
-    respDATA.forEach((data)=>{
+    case 'xrp':
+    case 'ripple':
+    case '리플':
+    case '리플코인':
+      return '리플';
 
-        var coin = coinPriceSpec;
-        
-        coin.name = data["name"].toLowerCase();
-        coin.symbol = data["symbol"].toLowerCase();
-        coin.id = data["id"];
-        coin.currentPrice = data.quote.USD["price"]; //현재가
-        coin.fluctate_rate_24 = data.quote.USD["percent_change_24h"];
-        coin.volume_24 = data.quote.USD["volume_24h"];
+    case 'eth':
+    case '이더리움':
+    case '이더':
+      return '이더리움';
 
-        //console.log(`CMC Listing Data : ${coin.name}`);
+    case 'ltc':
+    case '라이트코인':
+    case '라이트':
+      return'라이트코인';
 
-        //console.log(coin);
-        cmcCoins.push(coin);
-    });
+    case 'etc':
+    case '이더리움클래식':
+    case '이더리움 클래식':
+    case '이클':
+      return '이더리움클래식';
 
-    this.exchange_cmc = cmcCoins;
+    case 'bch':
+    case '비코캐':
+    case '비트코인캐시':
+    case '비캐':
+      return '비트코인캐시';
 
-    console.log("exchange_cmc content start");
+    case 'xmr':
+    case '모네로':
+      return '모네로';
 
-    for(let i = 0; i < cmcCoins.length; i++){
-      console.log(cmcCoins[i]);
-    }
-    // this.exchange_cmc.forEach( (imte) =>
-    // {
-    //   console.log(imte);
-    // })
-    
-    console.log("exchange_cmc content end");
+    case 'qtum':
+    case '퀀텀':
+    case '큐텀':
+      return '퀀텀';
+
+    case 'ada':
+    case '에이다':
+      return 'ada';
+
+    case 'neo':
+    case '네오':
+      return '네오';
+
+    case 'eos':
+    case '이오스':
+      return '이오스';
+
+    case 'trx':
+    case '트론':
+      return '트론';
+
+    case 'xlm':
+    case '스텔라':
+    case '스텔라루멘':
+      return '스텔라루멘';
+
+    default:
+      return 'unknown';
+  }
 }
+
 
 module.exports 						= polling_coin_price;
 module.exports.coinPriceCommand = coinPriceCommand;
-
-// http://localhost:3000/api/coinPrice
-/* 사용자 "가격블록" request 샘플
-{
-    "bot": {
-        "id": "66066c7dd954a304f009a28e",
-        "name": "코인봇"
-    },
-    "intent": {
-        "id": "660bab2f691ba24f6cd0fda5",
-        "name": "가격",
-        "extra": {
-            "reason": {
-                "code": 1,
-                "message": "OK"
-            }
-        }
-    },
-    "action": {
-        "id": "660bac6e1623006a29288627",
-        "name": "코인가격 스킬",
-        "params": {},
-        "detailParams": {},
-        "clientExtra": {}
-    },
-    "userRequest": {
-        "block": {
-            "id": "660bab2f691ba24f6cd0fda5",
-            "name": "가격"
-        },
-        "user": {
-            "id": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
-            "type": "botUserKey",
-            "properties": {
-                "botUserKey": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
-                "isFriend": true,
-                "plusfriendUserKey": "Ge9E5OHpsO6L",
-                "bot_user_key": "393970a60c945e0f2e530fac259cec6fd5fd5451dd451cd2d9f3c46160e6ae768d",
-                "plusfriend_user_key": "Ge9E5OHpsO6L"
-            }
-        },
-        "utterance": "!가격 btc",
-        "params": {
-            "surface": "Kakaotalk.plusfriend"
-        },
-        "lang": "ko",
-        "timezone": "Asia/Seoul"
-    },
-    "contexts": []
-}*/

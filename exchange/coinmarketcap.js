@@ -29,10 +29,10 @@ var request = require('request');
 var queryCMCPrice = function (callback) {
 	var options = {
 		headers: {
-			'X-CMC_PRO_API_KEY': 'a7ee27df-e9af-4165-8a17-6f9f8f4033e7' //a7ee27df-e9af-4165-8a17-6f9f8f4033e7 (졔) 952dd564-05e3-420a-8674-6a178fea19c9 (쭌)
-			//'X-CMC_PRO_API_KEY': '952dd564-05e3-420a-8674-6a178fea19c9'
+			'X-CMC_PRO_API_KEY': 'a7ee27df-e9af-4165-8a17-6f9f8f4033e7' //졔
+			//'X-CMC_PRO_API_KEY': '952dd564-05e3-420a-8674-6a178fea19c9',
 		},
-		uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=50',
+		uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=200',
 		method: 'GET'
 	};
 
