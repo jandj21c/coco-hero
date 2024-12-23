@@ -1,70 +1,42 @@
-// Import the WebSocket library
-const WebSocket = require('ws');
 const axios = require('axios');
-
-// Binance WebSocket endpoint
-const BINANCE_WS_URL = 'wss://stream.binance.com:9443/ws';
 
 // Memory variable to store ticker data
 let binanceTickerData = {};
 // Mapping of coin names to ticker symbols
 let englisthCoinNameToTickerMap = {};
 
-// Function to connect to Binance WebSocket and fetch miniTicker data
-function connectToBinance() {
-    const ws = new WebSocket(`${BINANCE_WS_URL}/!miniTicker@arr`);
+// Function to fetch and log USDT market data every 10 seconds
+async function fetchAndLogBinanceTickerData() {
+    try {
+        console.log('---- 바이낸스 USDT 마켓 코인 [시세] 가져오기 ----');
 
-    ws.on('open', async () => {
-        console.log('Connected to Binance WebSocket');
+        // Fetch 24hr ticker statistics from Binance API
+        const response = await axios.get('https://api.binance.com/api/v3/ticker/24hr');
+        const tickers = response.data;
 
-        await fetchEnglishCoinNameToTickerMap();
+        // Filter and update the ticker data for USDT market only
+        binanceTickerData = tickers.filter(ticker => ticker.symbol.endsWith('USDT')).reduce((acc, ticker) => {
+            const key = ticker.symbol.replace('USDT', ''); // Remove 'USDT' from the key
+            acc[key] = {
+                price: ticker.lastPrice,
+                highPrice: ticker.highPrice,
+                lowPrice: ticker.lowPrice,
+                volume: ticker.volume,
+                priceChange: ticker.priceChange,
+                priceChangePercent: ticker.priceChangePercent,
+                timestamp: Date.now()
+            };
+            return acc;
+        }, {});
 
-        // Send ping frame every 30 seconds to keep the connection alive
-        setInterval(() => {
-            ws.ping();
-            console.log('Ping sent to Binance');
-        }, 30000);
-    });
+        // Log the ticker data
+        // console.log('Ticker Data Snapshot:', binanceTickerData);
+        console.log('All ticker data updated:');
+        console.log(`Number of tickers in binanceTickerData: ${Object.keys(binanceTickerData).length}`);
 
-    ws.on('pong', () => {
-        console.log('Pong received from Binance');
-    });
-
-    ws.on('message', (message) => {
-        try {
-            const tickers = JSON.parse(message);
-
-            // Update the ticker data in memory for USDT market only
-            tickers.forEach((ticker) => {
-                if (ticker.s.endsWith('USDT')) {
-                    binanceTickerData[ticker.s] = {
-                        price: ticker.c,
-                        volume: ticker.v,
-                        timestamp: Date.now()
-                    };
-                }
-            });
-        } catch (error) {
-            console.error('Error parsing miniTicker data:', error);
-        }
-    });
-
-    ws.on('close', () => {
-        console.log('Binance WebSocket closed. Reconnecting in 5 seconds...');
-        setTimeout(connectToBinance, 5000); // Reconnect after 5 seconds
-    });
-
-    ws.on('error', (error) => {
-        console.error('WebSocket error:', error);
-        ws.close();
-    });
-}
-
-// Function to log all ticker data every 10 seconds
-function logbinanceTickerData() {
-    setInterval(() => {
-        console.log('Ticker Data Snapshot:', binanceTickerData);
-    }, 10000);
+    } catch (error) {
+        console.error('Error fetching ticker data from Binance:', error);
+    }
 }
 
 // Function to fetch and populate englisthCoinNameToTickerMap from Binance API
@@ -82,9 +54,18 @@ async function fetchEnglishCoinNameToTickerMap() {
         });
 
         console.log('Coin name to ticker map populated:', englisthCoinNameToTickerMap);
+        console.log('---- 바인내스 USDT 마켓 코인 [목록]이 업데이트 되었습니다----');
     } catch (error) {
         console.error('Error fetching exchange info from Binance:', error);
     }
 }
 
-module.exports = { binanceTickerData, connectToBinance, fetchEnglishCoinNameToTickerMap, logbinanceTickerData };
+// Function to periodically fetch ticker data
+function startFetchingTickerData() {
+    fetchEnglishCoinNameToTickerMap();
+    fetchAndLogBinanceTickerData(); // Initial fetch
+    setInterval(fetchAndLogBinanceTickerData, 15 * 1000); // Fetch every 30 seconds
+    setInterval(fetchEnglishCoinNameToTickerMap, 5 * 20 * 1000); // Fetch every 5분
+}
+
+module.exports = { binanceTickerData, fetchEnglishCoinNameToTickerMap, startFetchingTickerData };

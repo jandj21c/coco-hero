@@ -1,73 +1,52 @@
-// Import the WebSocket library
-const WebSocket = require('ws');
+// Import the Axios library
 const axios = require('axios');
 
-// Binance WebSocket endpoint
-const BINANCE_WS_URL = 'wss://stream.binance.com:9443/ws';
-
 // Memory variable to store ticker data
-let upbitTickerData = {};
-let koreanCoinNameToTickerMap = {};
+let upbitTickerData = {}; // 티커맵
+let koreanCoinNameToTickerMap = {}; // 예시) '비트코인': 'KRW-BTC', '이더리움': 'KRW-ETH',
 
-function connectToUpbit() {
-    const { v4: uuidv4 } = require('uuid');
-    const ws = new WebSocket('wss://api.upbit.com/websocket/v1');
 
-    ws.on('open', async () => {
-        console.log('Connected to Upbit WebSocket');
-
+async function fetchUpbitTickerData() {
+    try {
+        console.log('---- 업비트 원화 마켓 코인 [목록]과 [시세] 가져오기 ----');
+        
         // Fetch KRW market codes using fetchKoreanCoinNameToTickerMap
         await fetchKoreanCoinNameToTickerMap();
         const krwMarketCodes = Object.keys(koreanCoinNameToTickerMap)
             .filter((coinName) => koreanCoinNameToTickerMap[coinName].startsWith('KRW-'))
             .map((coinName) => koreanCoinNameToTickerMap[coinName]);
 
-        // Send subscription message to receive snapshot data for KRW pairs
-        ws.send(JSON.stringify([
-            { ticket: uuidv4() },
-            { type: 'ticker', codes: krwMarketCodes, is_only_snapshot: true } // Snapshot mode enabled
-        ]));
+        // Fetch ticker data for all KRW market codes in one request
+        const response = await axios.get(`https://api.upbit.com/v1/ticker?markets=${krwMarketCodes.join(',')}`);
+        const data = response.data;
 
-        // Send ping frame every 10 seconds to keep the connection alive
-        setInterval(() => {
-            ws.ping();
-            console.log('Ping sent to Upbit');
-        }, 10000);
-    });
+        // Update ticker data
+        data.forEach((item) => {
+            const ticker = item.market.replace('KRW-', '');
+            upbitTickerData[ticker] = {
+                price: item.trade_price,
+                volume: item.acc_trade_volume_24h,
+                high: item.high_price,
+                low: item.low_price,
+                change: item.signed_change_price,
+                timestamp: Date.now()
+            };
 
-    ws.on('message', (message) => {
-        try {
-            const data = JSON.parse(message);
-            if (data.type === 'ticker') {
-                const ticker = data.code.replace('KRW-', '');
-                upbitTickerData[ticker] = {
-                    price: data.trade_price,
-                    volume: data.acc_trade_volume_24h,
-                    timestamp: Date.now()
-                };
-            }
-        } catch (error) {
-            console.error('Error parsing Upbit ticker data:', error);
-        }
-    });
+            //console.log(`Updated data for ${ticker}:`, upbitTickerData[ticker]);
+        });
 
-    ws.on('close', () => {
-        console.log('Upbit WebSocket closed. Reconnecting in 5 seconds...');
-        setTimeout(connectToUpbit, 5000); // Reconnect after 5 seconds
-    });
-
-    ws.on('error', (error) => {
-        console.error('WebSocket error:', error);
-        ws.close();
-    });
+        //console.log('All ticker data updated:', upbitTickerData);
+        console.log('All ticker data updated:');
+        console.log(`Number of tickers in upbitTickerData: ${Object.keys(upbitTickerData).length}`);
+    } catch (error) {
+        console.error('Error fetching ticker data from Upbit:', error);
+    }
 }
 
-
-// Function to log all ticker data every 10 seconds
-function logUpbitTickerData() {
-    setInterval(() => {
-        console.log('Ticker Data Snapshot:', upbitTickerData);
-    }, 10000);
+// Function to periodically fetch ticker data
+function startFetchingTickerData() {
+    fetchUpbitTickerData(); // Initial fetch
+    setInterval(fetchUpbitTickerData, 15 * 1000); // Fetch every 15 seconds
 }
 
 async function fetchKoreanCoinNameToTickerMap() {
@@ -75,6 +54,10 @@ async function fetchKoreanCoinNameToTickerMap() {
         const response = await axios.get('https://api.upbit.com/v1/market/all');
         const markets = response.data;
 
+        // 예시)
+        // '비트코인': 'KRW-BTC',
+        // '이더리움': 'KRW-ETH',
+        
         markets.forEach((market) => {
             if (market.market.startsWith('KRW-')) { // Fetch only KRW market pairs
                 const coinName = market.korean_name; // Korean coin name
@@ -84,9 +67,10 @@ async function fetchKoreanCoinNameToTickerMap() {
         });
 
         console.log('Korean coin name to ticker map populated for KRW markets:', koreanCoinNameToTickerMap);
+        console.log('---- 업비트 원화 마켓 코인 [목록]이 업데이트 되었습니다----');
     } catch (error) {
         console.error('Error fetching market info from Upbit:', error);
     }
 }
 
-module.exports = { upbitTickerData, koreanCoinNameToTickerMap, connectToUpbit, logUpbitTickerData, fetchKoreanCoinNameToTickerMap };
+module.exports = { upbitTickerData, koreanCoinNameToTickerMap, startFetchingTickerData, fetchKoreanCoinNameToTickerMap };

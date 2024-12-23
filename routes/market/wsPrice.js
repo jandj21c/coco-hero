@@ -17,17 +17,8 @@ function initPolling() {
 
     console.log('initialize exchange polling. 거래소 폴링 시작.');
 
-    wsBinance.connectToBinance();
-    wsBinance.logbinanceTickerData();
-
-    wsUpbit.connectToUpbit();
-    wsUpbit.logUpbitTickerData();
-
-    // Start the WebSocket connection and logging
-    // fetchCoinNameToTickerMap().then(() => {
-    //     connectToBinance();
-    //     logbinanceTickerData();
-    // });
+    wsBinance.startFetchingTickerData();
+    wsUpbit.startFetchingTickerData();
 }
 
 // Function to get the current price of a specific ticker
