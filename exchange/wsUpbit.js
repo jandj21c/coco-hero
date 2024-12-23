@@ -9,6 +9,9 @@ let koreanCoinNameToTickerMap = {}; // 예시) '비트코인': 'KRW-BTC', '이�
 async function fetchUpbitTickerData() {
     try {
         console.log('---- 업비트 원화 마켓 코인 [목록]과 [시세] 가져오기 ----');
+
+         // Temporary object for new data
+        var newTickerData = {};
         
         // Fetch KRW market codes using fetchKoreanCoinNameToTickerMap
         await fetchKoreanCoinNameToTickerMap();
@@ -21,19 +24,21 @@ async function fetchUpbitTickerData() {
         const data = response.data;
 
         // Update ticker data
+        // Populate newTickerData
         data.forEach((item) => {
             const ticker = item.market.replace('KRW-', '');
-            upbitTickerData[ticker] = {
+            newTickerData[ticker] = {
                 price: item.trade_price,
                 volume: item.acc_trade_volume_24h,
                 high: item.high_price,
                 low: item.low_price,
-                change: item.signed_change_price,
-                timestamp: Date.now()
+                change: item.signed_change_rate, //Double
+                timestamp: Date.now() //Long
             };
-
             //console.log(`Updated data for ${ticker}:`, upbitTickerData[ticker]);
         });
+
+        upbitTickerData = newTickerData;
 
         //console.log('All ticker data updated:', upbitTickerData);
         console.log('All ticker data updated:');
@@ -67,10 +72,27 @@ async function fetchKoreanCoinNameToTickerMap() {
         });
 
         console.log('Korean coin name to ticker map populated for KRW markets:', koreanCoinNameToTickerMap);
-        console.log('---- 업비트 원화 마켓 코인 [목록]이 업데이트 되었습니다----');
+        console.log('---- 업비트 원화 마켓 코인 [목록]이 업데이트 되었습니다 ----');
     } catch (error) {
         console.error('Error fetching market info from Upbit:', error);
     }
 }
 
-module.exports = { upbitTickerData, koreanCoinNameToTickerMap, startFetchingTickerData, fetchKoreanCoinNameToTickerMap };
+// 한글이든 티커든 입력된 값을 순수 티커 (krw-btc 면 btc ) 로 가져온다.
+function findUpbitPureTicker(inputString) {
+    for (const [key, value] of Object.entries(koreanCoinNameToTickerMap)) {
+        // Check if the input matches the key
+        if (key === inputString) {
+            return value.replace('KRW-', '');
+        }
+
+        // Check if the input matches the value without "KRW-"
+        const strippedValue = value.replace('KRW-', '');
+        if (strippedValue === inputString) {
+            return strippedValue;
+        }
+    }
+    return null; // Return null if no match is found
+}
+
+module.exports = { upbitTickerData, koreanCoinNameToTickerMap, startFetchingTickerData, fetchKoreanCoinNameToTickerMap, findUpbitPureTicker };

@@ -1,36 +1,49 @@
 const axios = require('axios');
 
 // Memory variable to store ticker data
-let binanceTickerData = {};
+let binanceTickerData = {}; // ex) key : 'PEPE', value : datas...
 // Mapping of coin names to ticker symbols
-let englisthCoinNameToTickerMap = {};
+let englisthCoinNameToTickerMap = {}; // ex) 'PEPE': 'PEPEUSDT',
 
 // Function to fetch and log USDT market data every 10 seconds
 async function fetchAndLogBinanceTickerData() {
     try {
         console.log('---- 바이낸스 USDT 마켓 코인 [시세] 가져오기 ----');
 
+         // Temporary object for new data
+        var newTickerData = {};
+
         // Fetch 24hr ticker statistics from Binance API
         const response = await axios.get('https://api.binance.com/api/v3/ticker/24hr');
         const tickers = response.data;
 
         // Filter and update the ticker data for USDT market only
-        binanceTickerData = tickers.filter(ticker => ticker.symbol.endsWith('USDT')).reduce((acc, ticker) => {
+        newTickerData = tickers.filter(ticker => ticker.symbol.endsWith('USDT')).reduce((acc, ticker) => {
             const key = ticker.symbol.replace('USDT', ''); // Remove 'USDT' from the key
             acc[key] = {
                 price: ticker.lastPrice,
-                highPrice: ticker.highPrice,
-                lowPrice: ticker.lowPrice,
                 volume: ticker.volume,
-                priceChange: ticker.priceChange,
-                priceChangePercent: ticker.priceChangePercent,
+                high: ticker.highPrice,
+                low: ticker.lowPrice,
+                change: ticker.priceChangePercent, // 변화율
                 timestamp: Date.now()
             };
             return acc;
         }, {});
 
-        // Log the ticker data
-        // console.log('Ticker Data Snapshot:', binanceTickerData);
+        // ex) binanceTickerData 값
+        // HIFI: {
+        //     price: '0.52660000',
+        //     volume: '7538775.20000000',
+        //     high: '0.54710000',
+        //     low: '0.50900000',
+        //     change: '0.324',
+        //     timestamp: 1734968746076
+        //   },
+
+        binanceTickerData = newTickerData;
+
+        console.log('Ticker Data Snapshot:', binanceTickerData);
         console.log('All ticker data updated:');
         console.log(`Number of tickers in binanceTickerData: ${Object.keys(binanceTickerData).length}`);
 
@@ -45,6 +58,8 @@ async function fetchEnglishCoinNameToTickerMap() {
         const response = await axios.get('https://api.binance.com/api/v3/exchangeInfo');
         const symbols = response.data.symbols;
 
+        // ex) PEPE: 'PEPEUSDT',
+
         symbols.forEach((symbol) => {
             if (symbol.quoteAsset === 'USDT') {
                 const coinName = symbol.baseAsset; // Using baseAsset as a placeholder for coin name
@@ -54,7 +69,7 @@ async function fetchEnglishCoinNameToTickerMap() {
         });
 
         console.log('Coin name to ticker map populated:', englisthCoinNameToTickerMap);
-        console.log('---- 바인내스 USDT 마켓 코인 [목록]이 업데이트 되었습니다----');
+        console.log('---- 바인내스 USDT 마켓 코인 [목록]이 업데이트 되었습니다 ----');
     } catch (error) {
         console.error('Error fetching exchange info from Binance:', error);
     }
@@ -68,4 +83,4 @@ function startFetchingTickerData() {
     setInterval(fetchEnglishCoinNameToTickerMap, 5 * 20 * 1000); // Fetch every 5분
 }
 
-module.exports = { binanceTickerData, fetchEnglishCoinNameToTickerMap, startFetchingTickerData };
+module.exports = { binanceTickerData, englisthCoinNameToTickerMap, fetchEnglishCoinNameToTickerMap, startFetchingTickerData };

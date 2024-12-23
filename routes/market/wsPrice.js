@@ -18,7 +18,7 @@ function initPolling() {
     console.log('initialize exchange polling. 거래소 폴링 시작.');
 
     wsBinance.startFetchingTickerData();
-    wsUpbit.startFetchingTickerData();
+    //wsUpbit.startFetchingTickerData();
 }
 
 // Function to get the current price of a specific ticker
@@ -32,41 +32,52 @@ function getTickerPrice(ticker) {
 }
 
 // Function to convert a coin name to its ticker symbol
-function getTickerByCoinName(coinName) {
-    const ticker = coinNameToTickerMap[coinName];
-    if (ticker) {
-        return ticker;
+function getTickerFromBinance(englishCoinName) {
+    const tickerUSDT = wsBinance.englisthCoinNameToTickerMap[englishCoinName];
+    
+    // englishCoinName : tikerUSDT
+    // ㄴ-> ex) PEPE: 'PEPEUSDT', 
+
+    if (tickerUSDT) {
+        return englishCoinName;
     } else {
-        console.log(`Coin name ${coinName} not found in mapping.`);
+        console.log(`Coin name ${englishCoinName} not found in mapping.`);
         return null;
     }
 }
 
-// Function to convert a Korean coin name to its ticker symbol
-function getTickerByKoreanCoinName(koreanCoinName) {
-    const ticker = koreanCoinNameToTickerMap[koreanCoinName];
-    if (ticker) {
-        return ticker;
+function getTickerFromUpbit(koreanCoinName_or_krwTicker) {
+    const pureTicker = wsUpbit.findUpbitPureTicker(koreanCoinName_or_krwTicker);
+    if (pureTicker) {
+        return pureTicker;
     } else {
-        console.log(`Korean coin name ${koreanCoinName} not found in mapping.`);
+        console.log(`Korean coin name ${koreanCoinName_or_krwTicker} not found in mapping.`);
         return null;
     }
 }
 
 // Function to get the current price by any identifier (Korean name, English name, or ticker)
 function getPriceByIdentifier(identifier) {
-    let ticker = identifier;
+    var price = 0;
 
-    if (!wsBinance.binanceTickerData[ticker]) {
-        ticker = getTickerByCoinName(identifier) || getTickerByKoreanCoinName(identifier);
+    const ticker = getTickerFromUpbit(identifier);
+    if (ticker && wsUpbit.upbitTickerData[ticker])
+    {
+        // upbit
+        price = wsUpbit.upbitTickerData[ticker].price;
+        console.log(`${identifier} 가격은 ${price} KRW 입니다`);
+        return price;
+    }
+    else if (wsBinance.binanceTickerData[identifier])
+    {
+        // binance
+        price = wsBinance.binanceTickerData[identifier].price;
+        console.log(`${identifier} 가격은 ${price} USDT 입니다`);
+        return price;
     }
 
-    if (ticker && wsBinance.binanceTickerData[ticker]) {
-        return wsBinance.binanceTickerData[ticker].price;
-    } else {
-        console.log(`Identifier ${identifier} could not be resolved to a ticker or no data available.`);
-        return null;
-    }
+    console.log(`Identifier ${identifier} could not be resolved to a ticker or no data available.`);
+    return null;
 }
 
-module.exports = { initExchange, getTickerPrice, getTickerByCoinName, getTickerByKoreanCoinName, getPriceByIdentifier };
+module.exports = { initExchange, getTickerPrice, getTickerFromBinance, getTickerFromUpbit, getPriceByIdentifier };
