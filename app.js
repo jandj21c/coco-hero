@@ -20,6 +20,8 @@ var route_loader = require('./routes/route_loader');
 // 거래소 폴링 시작
 //var polling_coin_price = require('./routes/market/price');
 var exchange = require('./routes/market/wsPrice');
+var breakingNews = require('./news/coinNews');
+var algoran_youtube = require('./news/youtube');
 //var notify = require('./AlimCenter/priceNotifier');
 
 //var sequelize = require('./models').sequelize;
@@ -36,7 +38,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 route_loader.init(app, express.Router());
-exchange.initExchange();
+//exchange.initExchange();
+
+// 속보 크롤링
+breakingNews.startMonitorBreackingNews();
+
+// 알고란 유튜브 새로운 영상 확인
+algoran_youtube.startVideoCheckScheduler();
 
 //notify.eventReadyPriceNotify();
 
