@@ -12,7 +12,7 @@ async function fetchLatestBreakingNewsOne() {
     //const browser = await puppeteer.launch();
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: '/opt/render/.cache/puppeteer/google-chrome', // Chrome 설치 경로 지정
+      executablePath: '/opt/render/.cache/puppeteer/chrome', // Chrome 설치 경로 지정
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
