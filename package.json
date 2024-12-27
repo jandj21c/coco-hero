@@ -22,6 +22,7 @@
     "http": "^0.0.1-security",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
+    "puppeteer": "^23.11.1",
     "request": "^2.88.2",
     "text-to-image": "^5.2.0",
     "uuid": "^11.0.3",
