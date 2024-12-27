@@ -1,8 +1,10 @@
+require('dotenv').config();
 const axios = require('axios');
 const cron = require('node-cron');
 
 // GCC API
-const API_KEY = 'AIzaSyBBWfqz116hla4aLTo-G3VKOVfjqLbYdv0';
+
+const API_KEY = process.env.GOOGLE_API_KEY;
 
 // 채널의 이름
 const CHANNEL_USERNAME = '@algoran'; 
