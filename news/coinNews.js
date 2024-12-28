@@ -29,7 +29,13 @@ async function fetchLatestBreakingNewsOne() {
     const $ = cheerio.load(content);
 
     const time = $('[class^="TimeBlock-sc-glfxh-2"]').first().text().trim();
-    const link = BASE_URL + $('[class^="BreakingNewsTitle-sc-glfxh-4"] a').first().attr('href');
+    const href = $('[class^="BreakingNewsTitle-sc-glfxh-4"] a').first().attr('href');
+
+    let link = "";
+    if (href !== ""){
+      link = BASE_URL + href;
+    }
+
     const title = $('[class^="BreakingNewsTitle-sc-glfxh-4"]').first().text().trim();
     const desc = $('[class^="BreakingNewsContents-sc-glfxh-5"] span').first().text().trim();
     
@@ -53,9 +59,8 @@ async function fetchLatestBreakingNewsOne() {
       console.log(`---[NEW] 코인니스에서 가져온 최신 속보---`);
       console.log(`속보 시간: ${time}`);
       console.log(`제목: ${title}`);
-      console.log(`본문: ${content}`);
       console.log(`링크: ${link}`);
-      console.log(`링크: ${desc}`);
+      console.log(`내용: ${desc}`);
       console.log('--------------------------------');
     } else {
       console.log('새로운 속보가 없습니다.');
