@@ -86,9 +86,10 @@ function _parseItemCardBalloon(coinData) {
   itemCard.description = "";
 
   // thumbnail - 대표 이미지
-  itemCard.imageUrl = icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
-  itemCard.width = 800;
-  itemCard.height = 400;
+  itemCard.thumbnail = {};
+  itemCard.thumbnail.imageUrl = icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
+  itemCard.thumbnail.width = 800;
+  itemCard.thumbnail.height = 400;
 
   // profile
   itemCard.profile = {};
