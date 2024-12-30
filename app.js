@@ -43,7 +43,7 @@ route_loader.init(app, express.Router());
 exchange.initExchangeData();
 
 // 속보 크롤링
-breakingNews.startMonitorBreackingNews();
+//breakingNews.startMonitorBreackingNews();
 
 // 알고란 유튜브 새로운 영상 확인
 algoran_youtube.startVideoCheckScheduler();

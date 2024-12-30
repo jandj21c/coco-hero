@@ -26,14 +26,17 @@ async function fetchUpbitTickerData() {
         // Update ticker data
         // Populate newTickerData
         data.forEach((item) => {
-            const ticker = item.market.replace('KRW-', '');
+            const ticker = item.market.replace('KRW-', '').toLowerCase();
             newTickerData[ticker] = {
                 price: item.trade_price,
                 volume: item.acc_trade_volume_24h,
                 high: item.high_price,
                 low: item.low_price,
                 change: item.signed_change_rate, //Double
-                timestamp: Date.now() //Long
+                timestamp: Date.now(), //Long
+
+                fixedTicker : ticker,
+                exchange : `upbit`
             };
             //console.log(`Updated data for ${ticker}:`, upbitTickerData[ticker]);
         });

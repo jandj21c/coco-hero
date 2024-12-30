@@ -19,7 +19,7 @@ async function fetchAndLogBinanceTickerData() {
 
         // Filter and update the ticker data for USDT market only
         newTickerData = tickers.filter(ticker => ticker.symbol.endsWith('USDT')).reduce((acc, ticker) => {
-            const key = ticker.symbol.replace('USDT', ''); // Remove 'USDT' from the key
+            const key = ticker.symbol.replace('USDT', '').toLowerCase(); // Remove 'USDT' from the key
             acc[key] = {
                 // 업비트와 구조가 동일하기 때문에 필드 변경하면 안됨
                 price: ticker.lastPrice,
@@ -27,7 +27,10 @@ async function fetchAndLogBinanceTickerData() {
                 high: ticker.highPrice,
                 low: ticker.lowPrice,
                 change: ticker.priceChangePercent, // 변화율
-                timestamp: Date.now()
+                timestamp: Date.now(),
+
+                fixedTicker : key,
+                exchange : `binance`
             };
             return acc;
         }, {});

@@ -10,6 +10,10 @@ function initExchangeData() {
 
     wsBinance.startFetchingTickerData();
     wsUpbit.startFetchingTickerData();
+
+    setTimeout(() => {
+      _parseItemCardBalloon(getSearchCoinData(`비트코인`));
+  }, 10000);
 }
 
 function coinPriceCommand(req, res) {
@@ -25,7 +29,7 @@ function coinPriceCommand(req, res) {
 
   if ( req.body && req.body.userRequest.utterance && req.body.userRequest.utterance.trim()) {
 
-    coinName = req.body.userRequest.utterance.trim();
+    coinName = req.body.userRequest.utterance.trim().toLowerCase();
     
     console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${coinName}`));
 
@@ -229,16 +233,10 @@ function getSearchCoinData(identifier) {
     if (ticker && wsUpbit.upbitTickerData[ticker])
     {
         coinData = wsUpbit.upbitTickerData[ticker];
-
-        coinData.fixedTicker = ticker;
-        coinData.exchange = "upbit";
     }
     else if (wsBinance.binanceTickerData[identifier])
     {
         coinData = wsBinance.binanceTickerData[identifier];
-
-        coinData.fixedTicker = identifier;
-        coinData.exchange = "binance";
     }
 
     /*
