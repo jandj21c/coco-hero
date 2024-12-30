@@ -1,8 +1,10 @@
 
 // 봇서버로 부터 받은 요청 처리
 var util      = require('../../util');
-var coinInfo  = require('../../coinPricePolling');
+//var coinInfo  = require('../../coinPricePolling');
+var wsPrice = require('../market/wsPrice');
 
+// 웹훅 방식의 응답
 var responseBody = {
   version: '2.0',
   data: {
@@ -14,7 +16,7 @@ var responseBody = {
   }
 };
 
-var coinPriceCommand = function(req, res) {
+var ______coinPriceCommand = function(req, res) {
 
   console.log('----------- coinPriceCommand req --------------------');
   //console.log('----------- coinPriceCommand chat bot server request body -------------');

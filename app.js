@@ -38,7 +38,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 route_loader.init(app, express.Router());
-//exchange.initExchange();
+
+// 거래소 정보 폴링
+exchange.initExchangeData();
 
 // 속보 크롤링
 breakingNews.startMonitorBreackingNews();

@@ -8,7 +8,7 @@ let lastTitle = ''; // 마지막으로 감지된 속보 제목 저장
 async function fetchLatestBreakingNewsOne() {
   try {
     const BASE_URL = 'https://coinness.com';
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: true });
     // const browser = await puppeteer.launch({
     //   headless: true,
     //   args: [
@@ -23,6 +23,19 @@ async function fetchLatestBreakingNewsOne() {
     // });
 
     const page = await browser.newPage();
+    await page.setRequestInterception(true);
+
+    //응답 성능 향상을 위해 리소스 차단
+    page.on('request', (req) => {
+      const blockedResources = ['image', 'stylesheet', 'font'];
+      if (blockedResources.includes(req.resourceType())) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
+    //await page.goto('https://coinness.com/', { waitUntil: 'domcontentloaded' });
     await page.goto('https://coinness.com/', { waitUntil: 'networkidle2' });
 
     const content = await page.content();

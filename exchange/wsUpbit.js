@@ -41,8 +41,7 @@ async function fetchUpbitTickerData() {
         upbitTickerData = newTickerData;
 
         //console.log('All ticker data updated:', upbitTickerData);
-        console.log('All ticker data updated:');
-        console.log(`Number of tickers in upbitTickerData: ${Object.keys(upbitTickerData).length}`);
+        console.log(`[Upbit Price Updated] Number of tickers : ${Object.keys(upbitTickerData).length}`);
     } catch (error) {
         console.error('Error fetching ticker data from Upbit:', error);
     }
@@ -51,7 +50,7 @@ async function fetchUpbitTickerData() {
 // Function to periodically fetch ticker data
 function startFetchingTickerData() {
     fetchUpbitTickerData(); // Initial fetch
-    setInterval(fetchUpbitTickerData, 15 * 1000); // Fetch every 15 seconds
+    setInterval(fetchUpbitTickerData, 20 * 1000); // Fetch every 20 seconds
 }
 
 async function fetchKoreanCoinNameToTickerMap() {
@@ -71,8 +70,8 @@ async function fetchKoreanCoinNameToTickerMap() {
             }
         });
 
-        console.log('Korean coin name to ticker map populated for KRW markets:', koreanCoinNameToTickerMap);
-        console.log('---- 업비트 원화 마켓 코인 [목록]이 업데이트 되었습니다 ----');
+        //console.log('Korean coin name to ticker map populated for KRW markets:', koreanCoinNameToTickerMap);
+        console.log('[Upbit Ticker List Updated]');
     } catch (error) {
         console.error('Error fetching market info from Upbit:', error);
     }

@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 let coinIconUrlCache = {}; // ex) 'PEPE': 'https://assets.coingecko.com/coins/images/...'
 
 // Function to fetch coin icon URL by ticker and size

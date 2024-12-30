@@ -10,11 +10,6 @@ module.exports = {
     database_user_name : process.env.DB_USER_NAME,
     database_key_secret : process.env.DB_SECRET_KEY,
   
-    /* test Data base */
-    testbase_name :'heroku_9107542bb778cb2',
-    testbase_user_name : process.env.TEST_DB_USER_NAME,
-    testbase_key_secret : process.env.TEST_DB_SECRET_KEY,
-  
     route_info : [
       // route_info 에서 쓸 정보라서 파일은 routes 폴더를 기준으로 되어있다.
 
@@ -44,6 +39,6 @@ module.exports = {
       { file : './market/mood', path : '/api/marketMood', method : 'marketMoodCommand' , type : 'post'},
 
       // 가격
-      { file : './market/price', path : '/api/coinPrice', method : 'coinPriceCommand' , type : 'post'}
+      { file : './market/wsPrice', path : '/api/coinPrice', method : 'coinPriceCommand' , type : 'post'}
     ]
   }

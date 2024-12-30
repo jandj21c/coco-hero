@@ -21,6 +21,7 @@ async function fetchAndLogBinanceTickerData() {
         newTickerData = tickers.filter(ticker => ticker.symbol.endsWith('USDT')).reduce((acc, ticker) => {
             const key = ticker.symbol.replace('USDT', ''); // Remove 'USDT' from the key
             acc[key] = {
+                // 업비트와 구조가 동일하기 때문에 필드 변경하면 안됨
                 price: ticker.lastPrice,
                 volume: ticker.volume,
                 high: ticker.highPrice,
@@ -43,9 +44,8 @@ async function fetchAndLogBinanceTickerData() {
 
         binanceTickerData = newTickerData;
 
-        console.log('Ticker Data Snapshot:', binanceTickerData);
-        console.log('All ticker data updated:');
-        console.log(`Number of tickers in binanceTickerData: ${Object.keys(binanceTickerData).length}`);
+        //console.log('Ticker Data Snapshot:', binanceTickerData);
+        console.log(`[Binance Price Updated] Number of tickers : ${Object.keys(binanceTickerData).length}`);
 
     } catch (error) {
         console.error('Error fetching ticker data from Binance:', error);
@@ -68,8 +68,9 @@ async function fetchEnglishCoinNameToTickerMap() {
             }
         });
 
-        console.log('Coin name to ticker map populated:', englisthCoinNameToTickerMap);
-        console.log('---- 바인내스 USDT 마켓 코인 [목록]이 업데이트 되었습니다 ----');
+        //console.log('Coin name to ticker map populated:', englisthCoinNameToTickerMap);
+
+        console.log('[Binance Ticker List Updated]');
     } catch (error) {
         console.error('Error fetching exchange info from Binance:', error);
     }
@@ -79,7 +80,7 @@ async function fetchEnglishCoinNameToTickerMap() {
 function startFetchingTickerData() {
     fetchEnglishCoinNameToTickerMap();
     fetchAndLogBinanceTickerData(); // Initial fetch
-    setInterval(fetchAndLogBinanceTickerData, 15 * 1000); // Fetch every 30 seconds
+    setInterval(fetchAndLogBinanceTickerData, 20 * 1000); // Fetch every 20 seconds
     setInterval(fetchEnglishCoinNameToTickerMap, 5 * 20 * 1000); // Fetch every 5분
 }
 

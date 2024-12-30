@@ -1,15 +1,22 @@
-
-
-
-
-
-
-
-
-
-
 /* ----------------------------------------------------------------------------*/
 
+
+// 거래소 아이콘
+let exchangeIocn_binance = "https://assets.coingecko.com/markets/images/52/large/binance.jpg?1706864274"; // 바낸
+let exchangeIocn_upbit = "https://assets.coingecko.com/markets/images/117/large/upbit.png?1706864294"; // 업비트
+let exchangeIocn_bithumb =  "https://assets.coingecko.com/markets/images/6/large/bithumb_BI.png?1706864248"; // 빗썸
+
+// 말풍선 스킬 응답 템플릿 래퍼
+var balloonResponseWrapper = {
+  "version": "2.0",
+    "template": {
+        "outputs": [
+            {
+                // Set your balloon type data.
+            }
+        ]
+    }
+}
 
 var makeTemplateErrorText = function(text)  {
 
@@ -190,16 +197,14 @@ var addQuickReplyBlock = function(fromBalloon, label, blockId)  {
     return fromBalloon;
 }
 
+// function makeItemCardBalloon(itemCard)  {
 
+//   var itemCard = balloonResponseWrapper;
+//   itemCard.template.outputs.itemCard = itemCard;
 
-module.exports.makeTemplateErrorText      = makeTemplateErrorText;
-module.exports.makeTemplateBCard_DoBlock  = makeTemplateBCard_DoBlock;
-module.exports.makeTemplateBCardXButton   = makeTemplateBCardXButton;
-module.exports.makeTemplateBCardUseButton = makeTemplateBCardUseButton;
+//   return itemCard;
+// }
 
-module.exports.makeTemplateCarousel       = makeTemplateCarousel;
-module.exports.makeTemplateCarouselAddItem = makeTemplateCarouselAddItem;
-module.exports.makeTemplateCarouselItem   = makeTemplateCarouselItem;
-
-module.exports.addQuickReplyBlock         = addQuickReplyBlock;
-
+module.exports = { exchangeIocn_binance, exchangeIocn_upbit, exchangeIocn_bithumb, 
+  balloonResponseWrapper, makeTemplateErrorText, makeTemplateBCard_DoBlock, makeTemplateBCardXButton, makeTemplateBCardUseButton,
+  makeTemplateCarousel, makeTemplateCarouselAddItem, makeTemplateCarouselItem, addQuickReplyBlock};
