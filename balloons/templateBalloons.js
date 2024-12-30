@@ -10,11 +10,7 @@ let exchangeIocn_bithumb =  "https://assets.coingecko.com/markets/images/6/large
 var balloonResponseWrapper = {
   "version": "2.0",
     "template": {
-        "outputs": [
-            {
-                // Set your balloon type data.
-            }
-        ]
+        "outputs": []
     }
 }
 

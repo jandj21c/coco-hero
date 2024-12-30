@@ -1,9 +1,9 @@
 const axios = require('axios');
 
 // Memory variable to store ticker data
-let binanceTickerData = {}; // ex) key : 'PEPE', value : datas...
+let binanceTickerData = {}; //  ex) key : 'PEPE', value : datas...
 // Mapping of coin names to ticker symbols
-let englisthCoinNameToTickerMap = {}; // ex) 'PEPE': 'PEPEUSDT',
+let englisthCoinNameToTickerMap = {}; //대문자 주의!  ex) 'PEPE': 'PEPEUSDT',
 
 // Function to fetch and log USDT market data every 10 seconds
 async function fetchAndLogBinanceTickerData() {
@@ -19,7 +19,7 @@ async function fetchAndLogBinanceTickerData() {
 
         // Filter and update the ticker data for USDT market only
         newTickerData = tickers.filter(ticker => ticker.symbol.endsWith('USDT')).reduce((acc, ticker) => {
-            const key = ticker.symbol.replace('USDT', '').toLowerCase(); // Remove 'USDT' from the key
+            const key = ticker.symbol.replace('USDT', ''); // Remove 'USDT' from the key
             acc[key] = {
                 // 업비트와 구조가 동일하기 때문에 필드 변경하면 안됨
                 price: ticker.lastPrice,
@@ -45,7 +45,7 @@ async function fetchAndLogBinanceTickerData() {
         //     timestamp: 1734968746076
         //   },
 
-        binanceTickerData = newTickerData;
+        Object.assign(binanceTickerData, newTickerData);
 
         //console.log('Ticker Data Snapshot:', binanceTickerData);
         console.log(`[Binance Price Updated] Number of tickers : ${Object.keys(binanceTickerData).length}`);

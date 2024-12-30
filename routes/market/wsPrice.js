@@ -2,18 +2,15 @@ var wsBinance = require('../../exchange/wsBinance');
 var wsUpbit = require('../../exchange/wsUpbit');
 var icons = require('./icons');
 var balloons = require('../../balloons/templateBalloons');
+var util     = require('../../util');
 
 // 외부에서 호출하는 엔트리
-function initExchangeData() {
+async function initExchangeData() {
 
     console.log('initialize exchange polling. 거래소 폴링 시작. 20초 마다 업데이트');
 
-    wsBinance.startFetchingTickerData();
-    wsUpbit.startFetchingTickerData();
-
-    setTimeout(() => {
-      _parseItemCardBalloon(getSearchCoinData(`비트코인`));
-  }, 10000);
+    await wsBinance.startFetchingTickerData();
+    await wsUpbit.startFetchingTickerData();
 }
 
 function coinPriceCommand(req, res) {
@@ -29,7 +26,7 @@ function coinPriceCommand(req, res) {
 
   if ( req.body && req.body.userRequest.utterance && req.body.userRequest.utterance.trim()) {
 
-    coinName = req.body.userRequest.utterance.trim().toLowerCase();
+    coinName = req.body.userRequest.utterance.trim().toUpperCase();
     
     console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${coinName}`));
 
@@ -66,9 +63,11 @@ function _parseItemCardBalloon(coinData) {
   if (!coinData)
     return balloons.makeTemplateErrorText('등록된 코인이 아닙니다');
 
-  var itemCard;
+  let itemCard = {};
 
   // imageTitle
+  itemCard.imageTitle = {};
+
   itemCard.imageTitle.title = coinData.fixedTicker;
   if (coinData.exchange === `upbit`) {
     itemCard.imageTitle.description = `업비트에 등록된 티커입니다`; 
@@ -90,6 +89,8 @@ function _parseItemCardBalloon(coinData) {
   itemCard.height = 400;
 
   // profile
+  itemCard.profile = {};
+
   if (coinData.exchange === `upbit`) {
     itemCard.profile.title = `UPBIT`;
     itemCard.profile.imageUrl = balloons.exchangeIocn_upbit;
@@ -104,6 +105,7 @@ function _parseItemCardBalloon(coinData) {
   }
 
   // itemList - 본문에 들어갈 키 - 값 내용
+  itemCard.itemList = [];
   // 가격
   if (coinData.price > 0){
     if (coinData.exchange === `binance`){
@@ -143,7 +145,7 @@ function _parseItemCardBalloon(coinData) {
   balloon.template.outputs.itemCard = itemCard;
 
   // 완성된 말풍선 데이터를 리턴한다. 
-  console.log(`완성된 말풍선 데이터 ${balloon}`);
+  console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
 
   return balloon;
 }

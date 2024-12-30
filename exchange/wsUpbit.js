@@ -26,7 +26,7 @@ async function fetchUpbitTickerData() {
         // Update ticker data
         // Populate newTickerData
         data.forEach((item) => {
-            const ticker = item.market.replace('KRW-', '').toLowerCase();
+            const ticker = item.market.replace('KRW-', '');
             newTickerData[ticker] = {
                 price: item.trade_price,
                 volume: item.acc_trade_volume_24h,
@@ -41,7 +41,7 @@ async function fetchUpbitTickerData() {
             //console.log(`Updated data for ${ticker}:`, upbitTickerData[ticker]);
         });
 
-        upbitTickerData = newTickerData;
+        Object.assign(upbitTickerData, newTickerData);
 
         //console.log('All ticker data updated:', upbitTickerData);
         console.log(`[Upbit Price Updated] Number of tickers : ${Object.keys(upbitTickerData).length}`);
@@ -51,8 +51,8 @@ async function fetchUpbitTickerData() {
 }
 
 // Function to periodically fetch ticker data
-function startFetchingTickerData() {
-    fetchUpbitTickerData(); // Initial fetch
+async function startFetchingTickerData() {
+    await fetchUpbitTickerData(); // Initial fetch
     setInterval(fetchUpbitTickerData, 20 * 1000); // Fetch every 20 seconds
 }
 
