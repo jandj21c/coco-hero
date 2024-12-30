@@ -11,6 +11,8 @@ async function initExchangeData() {
 
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
+
+    _parseItemCardBalloon(getSearchCoinData("비트코인"));
 }
 
 function coinPriceCommand(req, res) {
@@ -141,8 +143,8 @@ function _parseItemCardBalloon(coinData) {
     itemCard.itemList.push({ title: `거래량`, description: coinData.volume });
   }
 
-  var balloon = balloons.balloonResponseWrapper;
-  balloon.template.outputs.itemCard = itemCard;
+  let balloon = balloons.balloonResponseWrapper;
+  balloon.template.outputs.push({itemCard : itemCard});
 
   // 완성된 말풍선 데이터를 리턴한다. 
   console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
