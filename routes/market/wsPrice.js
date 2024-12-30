@@ -27,7 +27,7 @@ function coinPriceCommand(req, res) {
 
     coinName = req.body.userRequest.utterance.trim();
     
-    console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${utter}`));
+    console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${coinName}`));
 
     // [그룹챗봇] 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
     // userWantCoin = utter.substr(3).trim();
