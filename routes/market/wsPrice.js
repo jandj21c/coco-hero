@@ -46,7 +46,7 @@ function coinPriceCommand(req, res) {
   res.status(200).json(resbody);
 }
 
-function _parseItemCardBalloon(coinData) {
+async function _parseItemCardBalloon(coinData) {
 
   /*
     price: ticker.lastPrice,
@@ -87,7 +87,7 @@ function _parseItemCardBalloon(coinData) {
 
   // thumbnail - 대표 이미지
   itemCard.thumbnail = {};
-  itemCard.thumbnail.imageUrl = icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
+  itemCard.thumbnail.imageUrl = await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
   itemCard.thumbnail.width = 800;
   itemCard.thumbnail.height = 400;
 
