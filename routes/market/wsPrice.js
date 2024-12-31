@@ -13,7 +13,7 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    _parseItemCardBalloon(getSearchCoinData("비트코인")); //test:
+    //_parseItemCardBalloon(getSearchCoinData("비트코인")); //test:
 }
 
 async function coinPriceCommand(req, res) {
@@ -95,7 +95,7 @@ async function _parseItemCardBalloon(coinData) {
 
   // thumbnail - 대표 이미지
   itemCard.thumbnail = {};
-  itemCard.thumbnail.imageUrl = await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
+  itemCard.thumbnail.imageUrl = `https://stablediffusionweb.com/ko/image/6389908-adorable-puppy`;//await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
   itemCard.thumbnail.width = 800;
   itemCard.thumbnail.height = 400;
 
