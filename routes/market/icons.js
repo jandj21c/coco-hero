@@ -56,6 +56,6 @@ async function testGetCoinIconUrl() {
 }
 
 // Call the test function (remove in production)
-testGetCoinIconUrl();
+//testGetCoinIconUrl();
 
 module.exports = { getCoinIconUrl };
