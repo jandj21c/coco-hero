@@ -94,8 +94,8 @@ async function checkForNewVideos() {
 // 5분마다 실행 (Cron 스케줄러)
 function startVideoCheckScheduler() {
     // 첫1회
-    console.log('유튜브 영상 업로드 검사...');
-    checkForNewVideos();
+    //console.log('유튜브 영상 업로드 검사...');
+    //checkForNewVideos();
 
     // 5분마다
     cron.schedule('*/30 * * * *', () => {
