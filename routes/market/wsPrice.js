@@ -95,7 +95,7 @@ async function _parseItemCardBalloon(coinData) {
 
   // thumbnail - 대표 이미지
   itemCard.thumbnail = {};
-  itemCard.thumbnail.imageUrl = `https://stablediffusionweb.com/ko/image/6389908-adorable-puppy`;//await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
+  itemCard.thumbnail.imageUrl = `https://imgcdn.stablediffusionweb.com/2024/4/30/2f52f66a-84ac-451b-bb06-b7fc087e6c84.jpg`;//await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
   itemCard.thumbnail.width = 800;
   itemCard.thumbnail.height = 400;
 
@@ -153,7 +153,7 @@ async function _parseItemCardBalloon(coinData) {
   }
 
   let balloon = balloons.balloonResponseWrapper;
-  balloon.template.outputs.push({itemCard : itemCard});
+  balloon.template.outputs.push(itemCard);
 
   // 완성된 말풍선 데이터를 리턴한다. 
   console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
