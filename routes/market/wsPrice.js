@@ -29,7 +29,8 @@ async function coinPriceCommand(req, res) {
 
   if ( req.body && req.body.userRequest.utterance && req.body.userRequest.utterance.trim()) {
 
-    coinName = req.body.userRequest.utterance.trim().toUpperCase();
+    // "/p {코인이름}"" 이 들어왔을 거라 생각하고 앞의 /p 를 제거, 남은 문자의 앞공백 제거, 대문자로 변경 
+    coinName = req.body.userRequest.utterance.trim().substr(2).trim().toUpperCase();
     
     console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${coinName}`));
 
@@ -71,7 +72,7 @@ async function _parseItemCardBalloon(coinData) {
 
 
   if (!coinData)
-    return balloons.makeTemplateErrorText('등록된 코인이 아닙니다');
+    return balloons.makeTemplateErrorText('검색 리스트에 없는 코인입니다');
 
   let itemCard = {
     "itemCard" : {}
@@ -254,6 +255,10 @@ function getSearchCoinData(identifier) {
         coinData = wsBinance.binanceTickerData[identifier];
     }
 
+    if (!coinData){
+      return null;
+    }
+      
     /*
     price: ticker.lastPrice,
     volume: ticker.volume,
