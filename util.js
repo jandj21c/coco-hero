@@ -13,10 +13,33 @@ var isEmpty = function(value) {
 
 var nameWithCommas = function(x) {
   let parts = x.toString().split(".");
+  
+  // 정수 부분 쉼표 추가
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  if (x >= 1000) {
+    // 입력값이 1000 이상인 경우: 소수점 절삭
+    return parts[0]; // 정수 부분만 반환
+  } else if (x >= 10) {
+    // 입력값이 10 이상 1000 미만인 경우: 소수점 2자리까지 유지
+    if (parts[1]) {
+      parts[1] = parts[1].substring(0, 2); // 소수점 두 자리 유지
+    }
+  } else if (x < 10 && parts[1]) {
+    // 입력값이 10 이하인 경우: 소수점에서 0이 아닌 숫자 3자리 유지
+    let significantDigits = 0;
+    parts[1] = parts[1]
+      .split("")
+      .filter((digit) => {
+        if (digit !== "0") significantDigits++;
+        return significantDigits <= 3 || digit === "0";
+      })
+      .join("");
+  }
+
+  // 정수와 소수 부분 합치기
   return parts.join(".");
 };
-
 var trim = function(str){
   return str.replace(/(\s*)/g,"");
 }

@@ -9,6 +9,7 @@ async function initExchangeData() {
 
     console.log('initialize exchange polling. 거래소 폴링 시작. 20초 마다 업데이트');
 
+    await icons.InitCoinIconList();
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
@@ -94,7 +95,7 @@ async function _parseItemCardBalloon(coinData) {
 
   // thumbnail - 대표 이미지
   itemCard.thumbnail = {};
-  itemCard.thumbnail.imageUrl = "https://coin-images.coingecko.com/coins/images/36627/large/photo_2024-03-29_21-53-44.jpg?1712015970";//await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
+  itemCard.thumbnail.imageUrl = await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
   itemCard.thumbnail.width = 800;
   itemCard.thumbnail.height = 400;
 
