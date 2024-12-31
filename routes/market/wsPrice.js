@@ -73,7 +73,9 @@ async function _parseItemCardBalloon(coinData) {
   if (!coinData)
     return balloons.makeTemplateErrorText('등록된 코인이 아닙니다');
 
-  let itemCard = {};
+  let itemCard = {
+    "itemCard" : {}
+  };
 
   // imageTitle
   itemCard.imageTitle = {};
@@ -153,7 +155,7 @@ async function _parseItemCardBalloon(coinData) {
   }
 
   let balloon = balloons.balloonResponseWrapper;
-  balloon.template.outputs.push(itemCard);
+  balloon.template.outputs.push({itemCard});
 
   // 완성된 말풍선 데이터를 리턴한다. 
   console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
