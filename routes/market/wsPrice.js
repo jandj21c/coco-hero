@@ -13,7 +13,7 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    // test: _parseItemCardBalloon(getSearchCoinData("비트코인"));
+    _parseItemCardBalloon(getSearchCoinData("비트코인")); //test:
 }
 
 async function coinPriceCommand(req, res) {
@@ -156,7 +156,7 @@ async function _parseItemCardBalloon(coinData) {
   balloon.template.outputs.push({itemCard : itemCard});
 
   // 완성된 말풍선 데이터를 리턴한다. 
-  //console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
+  console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
 
   return balloon;
 }

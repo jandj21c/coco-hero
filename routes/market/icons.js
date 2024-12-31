@@ -4,12 +4,21 @@ let coinIconUrlCache = {}; // ex) 'PEPE': 'https://assets.coingecko.com/coins/im
 let coinIconListData = {};
 
 async function InitCoinIconList(ticker, size = 'large') {
-    const response = await axios.get('https://api.coingecko.com/api/v3/coins/list');
-    if (response.data){
-        console.log(`Initiated COINGECKO Icon Image List`);
-    }
-
-    coinIconListData = response.data;
+    try {
+        const response = await axios.get('https://api.coingecko.com/api/v3/coins/list', {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          }
+        });
+    
+        if (response.data) {
+          console.log(`Initiated COINGECKO Icon Image List`);
+        }
+    
+        coinIconListData = response.data;
+      } catch (error) {
+        console.error(`Error while initializing CoinGecko icon list:`, error.message);
+      }
 }
 
 // Function to fetch coin icon URL by ticker and size
