@@ -31,7 +31,11 @@ async function getChannelId(username) {
 // 최신 영상 가져오기
 async function getLatestVideo(channelId) {
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&maxResults=1&key=${API_KEY}`;
-  const response = await axios.get(url);
+  const response = await axios.get(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+  });
   const video = response.data.items[0];
   return {
     videoId: video.id.videoId,
@@ -94,7 +98,7 @@ function startVideoCheckScheduler() {
     checkForNewVideos();
 
     // 5분마다
-    cron.schedule('*/5 * * * *', () => {
+    cron.schedule('*/30 * * * *', () => {
         console.log('유튜브 영상 업로드 검사...');
         checkForNewVideos();
     });
