@@ -12,10 +12,10 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    //_parseItemCardBalloon(getSearchCoinData("비트코인"));
+    // test: _parseItemCardBalloon(getSearchCoinData("비트코인"));
 }
 
-function coinPriceCommand(req, res) {
+async function coinPriceCommand(req, res) {
 
   console.log('-------------- coinPriceCommand req COMMING ----------------');
   //console.log('----------- coinPriceCommand chat bot server request body -------------');
@@ -42,56 +42,18 @@ function coinPriceCommand(req, res) {
   }
 
   // 거래소에서 가져온 코인 정보로 말풍선을 만든다
-  const resbody =  _parseItemCardBalloon(getSearchCoinData(coinName)); 
-  console.log(`coinPriceCommand 응답 데이터 = ${JSON.stringify(resbody, null, 4)}`);
-  res.status(200).json(resbody);
+  _parseItemCardBalloon(getSearchCoinData(coinName))
+    .then(resbody => {
+      console.log(`coinPriceCommand 응답 데이터 = ${JSON.stringify(resbody, null, 4)}`);
+      res.status(200).json(resbody);
+    })
+    .catch(err => {
+      console.error(`Error: ${err.message}`);
+      res.status(500).json({ error: "Internal Server Error" });
+    });
 }
 
 async function _parseItemCardBalloon(coinData) {
-
-  /*
-    price: ticker.lastPrice,
-    volume: ticker.volume,
-    high: ticker.highPrice,
-    low: ticker.lowPrice,
-    change: ticker.priceChangePercent, // 변화율
-    timestamp: Date.now()
-    fixedTicker - 보여줄 티커 이름
-    exchange - 정보를 가져온 거래소 이름
-    */
-
-  // 아이템 카드 말풍선을 만든다.
-
-
-  if (!coinData)
-    return balloons.makeTemplateErrorText('등록된 코인이 아닙니다');
-
-  let itemCard = {};
-
-  
-  // itemList - 본문에 들어갈 키 - 값 내용
-  itemCard.itemList = [];
-  // 가격
-  if (coinData.price > 0){
-    if (coinData.exchange === `binance`){
-      itemCard.itemList.push({ title: "현재 가격", description: `$` + util.nameWithCommas(coinData.price)});
-    }
-    else{
-      itemCard.itemList.push({ title: "현재 가격", description: util.nameWithCommas(coinData.price) + `원`});
-    }
-  }
-
-
-  let balloon = balloons.balloonResponseWrapper;
-  balloon.template.outputs.push({itemCard : itemCard});
-
-  // 완성된 말풍선 데이터를 리턴한다. 
-  console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
-
-  return balloon;
-}
-
-async function ___parseItemCardBalloon(coinData) {
 
   /*
     price: ticker.lastPrice,
@@ -193,7 +155,7 @@ async function ___parseItemCardBalloon(coinData) {
   balloon.template.outputs.push({itemCard : itemCard});
 
   // 완성된 말풍선 데이터를 리턴한다. 
-  console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
+  //console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
 
   return balloon;
 }
