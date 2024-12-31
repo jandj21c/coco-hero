@@ -159,7 +159,7 @@ async function _parseItemCardBalloon(coinData) {
   balloon.template.outputs.push({itemCard});
 
   // 완성된 말풍선 데이터를 리턴한다. 
-  console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
+  //console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
 
   return balloon;
 }
