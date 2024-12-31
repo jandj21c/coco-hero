@@ -12,7 +12,7 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    _parseItemCardBalloon(getSearchCoinData("비트코인"));
+    //_parseItemCardBalloon(getSearchCoinData("비트코인"));
 }
 
 function coinPriceCommand(req, res) {
@@ -87,7 +87,7 @@ async function _parseItemCardBalloon(coinData) {
 
   // thumbnail - 대표 이미지
   itemCard.thumbnail = {};
-  itemCard.thumbnail.imageUrl = await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
+  itemCard.thumbnail.imageUrl = "https://coin-images.coingecko.com/coins/images/36627/large/photo_2024-03-29_21-53-44.jpg?1712015970";//await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
   itemCard.thumbnail.width = 800;
   itemCard.thumbnail.height = 400;
 
