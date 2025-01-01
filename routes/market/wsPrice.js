@@ -48,8 +48,13 @@ async function coinPriceCommand(req, res) {
   // 거래소에서 가져온 코인 정보로 말풍선을 만든다
   _parseItemCardBalloon(getSearchCoinData(coinName))
     .then(resbody => {
-      console.log(`coinPriceCommand 응답 데이터 = ${JSON.stringify(resbody, null, 4)}`);
-      res.status(200).json(resbody);
+      if (!resbody) {
+        res.status(200).json(balloons.makeTemplateErrorText("문제가 발생했습니다."));
+      }
+      else{
+        console.log(`coinPriceCommand 응답 데이터 = ${JSON.stringify(resbody, null, 4)}`);
+        res.status(200).json(resbody);
+      }
     })
     .catch(err => {
       console.error(`Error: ${err.message}`);
@@ -73,8 +78,10 @@ async function _parseItemCardBalloon(coinData) {
   // 아이템 카드 말풍선을 만든다.
 
 
-  if (!coinData)
-    return balloons.makeTemplateErrorText('검색 리스트에 없는 코인입니다');
+  if (!coinData || !coinData.fixedTicker || !coinData.price || !coinData.change ||
+     !coinData.high || !coinData.low || !coinData.volume ) {
+    return balloons.makeTemplateErrorText('거래소 데이터에 문제가 발생했습니다.');
+  }
 
   let itemCard = {
     "itemCard" : {}
@@ -120,41 +127,46 @@ async function _parseItemCardBalloon(coinData) {
     itemCard.profile.description = balloons.exchangeIocn_bithumb;
   }
 
-  // itemList - 본문에 들어갈 키 - 값 내용
+  // itemList - 본문에 들어갈 키 - 값 내용  < 말풍선 필수!! 값 >
   itemCard.itemList = [];
-  // 가격
-  if (coinData.price > 0){
-    if (coinData.exchange === `binance`){
-      itemCard.itemList.push({ title: "현재 가격", description: `$` + util.nameWithCommas(coinData.price)});
-    }
-    else{
-      itemCard.itemList.push({ title: "현재 가격", description: util.nameWithCommas(coinData.price) + "원"});
-    }
+    
+  if (coinData.exchange === `binance`) {
+    itemCard.itemList.push({ title: "현재 가격", description: `$` + util.nameWithCommas(coinData.price)});
+  }
+  else{
+    itemCard.itemList.push({ title: "현재 가격", description: util.nameWithCommas(coinData.price) + "원"});
   }
 
   // 변동율
   if (coinData.change > 0) {
     let fluctate = util.nameWithCommas(coinData.change);
-    fluctate ='🔺(상승)' +fluctate;
+    fluctate ='🔺' + fluctate + `%`;
 
-    itemCard.itemList.push({ title: `변동%`, description: fluctate });
+    itemCard.itemList.push({ title: `변동`, description: fluctate });
   }
   else {
     let fluctate = util.nameWithCommas(coinData.change);
-    fluctate ='💧(하락)' +fluctate;
+    fluctate ='💧' + fluctate + `%`;
 
-    itemCard.itemList.push({ title: `변동%`, description: fluctate });
+    itemCard.itemList.push({ title: `변동`, description: fluctate });
   }
   
   // 고가, 저가
-  if (coinData.high > 0 && coinData.low > 0) {
-    itemCard.itemList.push({ title: `고가`, description : util.nameWithCommas(coinData.high) });
-    itemCard.itemList.push({ title: `저가`, description : util.nameWithCommas(coinData.low) });
+  if (coinData.high > 0 && coinData.low > 0)
+  {
+    if (coinData.exchange === `binance`){
+      itemCard.itemList.push({ title: `고가`, description : `$` + util.nameWithCommas(coinData.high) });
+      itemCard.itemList.push({ title: `저가`, description : `$` + util.nameWithCommas(coinData.low) });
+    }
+    else {
+      itemCard.itemList.push({ title: `고가`, description : util.nameWithCommas(coinData.high) + `원` });
+      itemCard.itemList.push({ title: `저가`, description : util.nameWithCommas(coinData.low) + `원`});
+    }
   }
 
   // 거래량
-  if (coinData.volume > 0){
-    itemCard.itemList.push({ title: `거래량`, description: coinData.volume });
+  if (coinData.volume > 0) {
+    itemCard.itemList.push({ title: `거래량`, description: util.nameWithCommas(coinData.volume) + `(${coinData.fixedTicker})` });
   }
 
   let balloon = JSON.parse(JSON.stringify(balloons.balloonResponseWrapper)); // 깊은 복사해야함.

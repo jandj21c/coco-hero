@@ -2,9 +2,9 @@
 
 
 // 거래소 아이콘
-let exchangeIocn_binance = "https://assets.coingecko.com/markets/images/52/large/binance.jpg?1706864274"; // 바낸
-let exchangeIocn_upbit = "https://assets.coingecko.com/markets/images/117/large/upbit.png?1706864294"; // 업비트
-let exchangeIocn_bithumb =  "https://assets.coingecko.com/markets/images/6/large/bithumb_BI.png?1706864248"; // 빗썸
+let exchangeIocn_binance = "https://assets.coingecko.com/markets/images/52/small/binance.jpg?1706864274"; // 바낸
+let exchangeIocn_upbit = "https://assets.coingecko.com/markets/images/117/small/upbit.png?1706864294"; // 업비트
+let exchangeIocn_bithumb =  "https://assets.coingecko.com/markets/images/6/small/bithumb_BI.png?1706864248"; // 빗썸
 
 // 말풍선 스킬 응답 템플릿 래퍼
 var balloonResponseWrapper = {
