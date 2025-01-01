@@ -15,7 +15,7 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    //_parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
+    _parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
 }
 
 async function coinPriceCommand(req, res) {
@@ -76,9 +76,11 @@ async function _parseItemCardBalloon(coinData) {
     */
 
   // 아이템 카드 말풍선을 만든다.
+  if (!coinData) {
+    return balloons.makeTemplateErrorText(`해당 코인의 이름은 등록되어 있지 않습니다.`);
+  }
 
-
-  if (!coinData || !coinData.fixedTicker || !coinData.price || !coinData.change ||
+  if (!coinData.fixedTicker || !coinData.price || !coinData.change ||
      !coinData.high || !coinData.low || !coinData.volume ) {
     return balloons.makeTemplateErrorText('거래소 데이터에 문제가 발생했습니다.');
   }
@@ -169,7 +171,7 @@ async function _parseItemCardBalloon(coinData) {
     itemCard.itemList.push({ title: `거래량`, description: util.nameWithCommas(coinData.volume) + `(${coinData.fixedTicker})` });
   }
 
-  let balloon = JSON.parse(JSON.stringify(balloons.balloonResponseWrapper)); // 깊은 복사해야함.
+  let balloon = balloons.balloonResponseWrapper();
   balloon.template.outputs.push({itemCard});
 
   log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);

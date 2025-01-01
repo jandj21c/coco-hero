@@ -7,11 +7,13 @@ let exchangeIocn_upbit = "https://assets.coingecko.com/markets/images/117/small/
 let exchangeIocn_bithumb =  "https://assets.coingecko.com/markets/images/6/small/bithumb_BI.png?1706864248"; // 빗썸
 
 // 말풍선 스킬 응답 템플릿 래퍼
-var balloonResponseWrapper = {
-  "version": "2.0",
+function balloonResponseWrapper() {
+  return { 
+    "version": "2.0",
     "template": {
         "outputs": []
     }
+  }
 }
 
 var makeTemplateErrorText = function(text)  {
