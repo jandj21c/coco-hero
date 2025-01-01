@@ -40,12 +40,13 @@ async function coinPriceCommand(req, res) {
 
     // "/p {코인이름}"" 이 들어왔을 거라 생각하고 앞의 /p 를 제거, 남은 문자의 앞공백 제거, 대문자로 변경 
     coinName = utter.substr(2).trim().toUpperCase();
-    
-    console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${coinName}`));
 
-    // [그룹챗봇] 사용자 대화는 "!가격 XXX" 라고 들어왔을거라 가정하고 !가격 뒤를 자름
-    // userWantCoin = utter.substr(3).trim();
-    // console.log(JSON.stringify(`사용자가 요청한  코인 가격 정보 : ${userWantCoin}`));
+    if (coinName.length === 0) {
+      res.status(200).json(balloons.makeTemplateErrorText("티커명이 비어있습니다."));
+      return;
+    }
+    
+    console.log(JSON.stringify(`사용자가 시세 정보를 요청한 코인: ${coinName}`));
   }
   else {
     res.status(200).json(balloons.makeTemplateErrorText("코인 가격 검색 요청이 올바르지 않습니다."));
