@@ -26,6 +26,10 @@ async function coinPriceCommand(req, res) {
   //console.log('----------- coinPriceCommand chat bot server request end -----------');
 
   console.log(JSON.stringify(req.body, null, 4));
+
+  if (!input.startsWith("/p ") && !input.startsWith("시세 ")) { //const regex = /^(\/p |시세 )/;
+    res.status(200).json(balloons.makeTemplateErrorText("알 수 없는 명령어 입니다"));
+  }
   
   let coinName;
 
