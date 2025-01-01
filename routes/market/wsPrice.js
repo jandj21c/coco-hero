@@ -155,7 +155,7 @@ async function _parseItemCardBalloon(coinData) {
     itemCard.itemList.push({ title: `거래량`, description: coinData.volume });
   }
 
-  let balloon = balloons.balloonResponseWrapper;
+  let balloon = Json.parse(Json.stringify(balloons.balloonResponseWrapper)); // 깊은 복사해야함.
   balloon.template.outputs.push({itemCard});
 
   // 완성된 말풍선 데이터를 리턴한다. 
