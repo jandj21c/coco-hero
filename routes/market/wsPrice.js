@@ -27,16 +27,19 @@ async function coinPriceCommand(req, res) {
 
   console.log(JSON.stringify(req.body, null, 4));
 
-  if (!input.startsWith("/p ") && !input.startsWith("시세 ")) { //const regex = /^(\/p |시세 )/;
-    res.status(200).json(balloons.makeTemplateErrorText("알 수 없는 명령어 입니다"));
-  }
-  
   let coinName;
 
   if ( req.body && req.body.userRequest.utterance && req.body.userRequest.utterance.trim()) {
 
+    let utter = req.body.userRequest.utterance.trim(); // 앞뒤 공백 제거
+  
+    if (!utter.startsWith("/p ") && !utter.startsWith("시세 ")) { //const regex = /^(\/p |시세 )/;
+      res.status(200).json(balloons.makeTemplateErrorText("알 수 없는 명령어 입니다"));
+      return;
+    }
+
     // "/p {코인이름}"" 이 들어왔을 거라 생각하고 앞의 /p 를 제거, 남은 문자의 앞공백 제거, 대문자로 변경 
-    coinName = req.body.userRequest.utterance.trim().substr(2).trim().toUpperCase();
+    coinName = utter.substr(2).trim().toUpperCase();
     
     console.log(JSON.stringify(`사용자가 요청한 가격 블록의 대화 전문: ${coinName}`));
 
