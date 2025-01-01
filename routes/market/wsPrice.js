@@ -3,6 +3,8 @@ var wsUpbit = require('../../exchange/wsUpbit');
 var icons = require('./icons');
 var balloons = require('../../balloons/templateBalloons');
 var util     = require('../../util');
+const log = require('../../logger');
+
 
 // 외부에서 호출하는 엔트리
 async function initExchangeData() {
@@ -13,7 +15,7 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    //_parseItemCardBalloon(getSearchCoinData("비트코인")); //test:
+    _parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
 }
 
 async function coinPriceCommand(req, res) {
@@ -155,8 +157,10 @@ async function _parseItemCardBalloon(coinData) {
     itemCard.itemList.push({ title: `거래량`, description: coinData.volume });
   }
 
-  let balloon = Json.parse(Json.stringify(balloons.balloonResponseWrapper)); // 깊은 복사해야함.
+  let balloon = JSON.parse(JSON.stringify(balloons.balloonResponseWrapper)); // 깊은 복사해야함.
   balloon.template.outputs.push({itemCard});
+
+  log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
 
   // 완성된 말풍선 데이터를 리턴한다. 
   //console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);

@@ -80,9 +80,9 @@ async function fetchEnglishCoinNameToTickerMap() {
 }
 
 // Function to periodically fetch ticker data
-function startFetchingTickerData() {
+async function startFetchingTickerData() {
     fetchEnglishCoinNameToTickerMap();
-    fetchAndLogBinanceTickerData(); // Initial fetch
+    await fetchAndLogBinanceTickerData(); // Initial fetch
     setInterval(fetchAndLogBinanceTickerData, 20 * 1000); // Fetch every 20 seconds
     setInterval(fetchEnglishCoinNameToTickerMap, 5 * 20 * 1000); // Fetch every 5분
 }
