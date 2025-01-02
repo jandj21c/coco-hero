@@ -14,7 +14,9 @@ async function initExchangeData() {
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
-    //_parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
+    if (process.env.NODE_ENV === 'development') {
+      _parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
+    }
 }
 
 async function coinPriceCommand(req, res) {
