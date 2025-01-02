@@ -1,6 +1,6 @@
 var wsBinance = require('../../exchange/wsBinance');
 var wsUpbit = require('../../exchange/wsUpbit');
-var icons = require('./icons');
+var icons = require('./cmc_icons');
 var balloons = require('../../balloons/templateBalloons');
 var util     = require('../../util');
 const log = require('../../logger');
@@ -11,7 +11,6 @@ async function initExchangeData() {
 
     console.log('initialize exchange polling. 거래소 폴링 시작. 20초 마다 업데이트');
 
-    await icons.InitCoinIconList();
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
@@ -115,11 +114,16 @@ async function _parseItemCardBalloon(coinData) {
   //itemCard.title = "";
   //itemCard.description = "";
 
-  // thumbnail - 대표 이미지
-  itemCard.thumbnail = {};
-  itemCard.thumbnail.imageUrl = `https://imgcdn.stablediffusionweb.com/2024/4/30/2f52f66a-84ac-451b-bb06-b7fc087e6c84.jpg`;//await icons.getCoinIconUrl(coinData.fixedTicker); // coin gecko 에서 가져온 url 
-  itemCard.thumbnail.width = 800;
-  itemCard.thumbnail.height = 400;
+  // thumbnail - 코인 아이콘 대표 이미지
+  try {
+    itemCard.thumbnail = {};
+    
+    itemCard.thumbnail.imageUrl = await icons.getLogoUrl(coinData.fixedTicker); //`https://imgcdn.stablediffusionweb.com/2024/4/30/2f52f66a-84ac-451b-bb06-b7fc087e6c84.jpg`;
+    itemCard.thumbnail.width = 800;
+    itemCard.thumbnail.height = 400;
+  } catch (error) {
+    console.error(error.message);
+  }
 
   // profile
   itemCard.profile = {};
