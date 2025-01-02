@@ -130,11 +130,11 @@ async function _parseItemCardBalloon(coinData) {
   }
   else if (coinData.exchange === `binance`) {
     itemCard.profile.title = `BINANCE`;
-    itemCard.profile.description = balloons.exchangeIocn_binance;
+    itemCard.profile.imageUrl = balloons.exchangeIocn_binance;
   }
   else if (coinData.exchange === `bithumb`) {
     itemCard.profile.title = `BITHUMB`;
-    itemCard.profile.description = balloons.exchangeIocn_bithumb;
+    itemCard.profile.imageUrl = balloons.exchangeIocn_bithumb;
   }
 
   // itemList - 본문에 들어갈 키 - 값 내용  < 말풍선 필수!! 값 >

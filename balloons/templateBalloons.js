@@ -2,7 +2,7 @@
 
 
 // 거래소 아이콘
-let exchangeIocn_binance = "https://image.ajunews.com/content/image/2024/03/29/20240329130623950377.jpg"; // 바낸
+let exchangeIocn_binance = "https://www.theguru.co.kr/data/photos/20211041/art_16342749530136_15e226.png"; // 바낸
 let exchangeIocn_upbit = "https://assets.coingecko.com/markets/images/117/small/upbit.png?1706864294"; // 업비트
 let exchangeIocn_bithumb =  "https://assets.coingecko.com/markets/images/6/small/bithumb_BI.png?1706864248"; // 빗썸
 
