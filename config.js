@@ -1,14 +1,6 @@
 module.exports = {
 
-    server_port : process.env.PORT || 1000,
-  
-    //database_host : 'us-cdbr-iron-east-03.cleardb.net',
-    //dialect : 'mysql',
-  
-    /* develop Data base */
-    database_name : 'heroku_b12efbb902f7e6d',
-    database_user_name : process.env.DB_USER_NAME,
-    database_key_secret : process.env.DB_SECRET_KEY,
+    server_port : process.env.PORT || 3000,
   
     route_info : [
       // route_info 에서 쓸 정보라서 파일은 routes 폴더를 기준으로 되어있다.

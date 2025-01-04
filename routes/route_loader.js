@@ -18,8 +18,6 @@ function initRoutes(app, router) {
 
 		// 모듈 파일에서 모듈 불러옴
 		var curModule = require(curItem.file);
-		console.log('%s 파일에서 모듈정보를 읽어옴.', curItem.file);
-
 		//  라우팅 처리
 		if (curItem.type == 'get') {
             router.route(curItem.path).get(curModule[curItem.method]);
@@ -28,8 +26,6 @@ function initRoutes(app, router) {
 		} else {
 			router.route(curItem.path).post(curModule[curItem.method]);
 		}
-
-		console.log('============= [ROUTES SETTED 라우팅 모듈 [%s]이(가) 설정됨. =============', curItem.method);
 	}
 
     // 라우터 객체 등록

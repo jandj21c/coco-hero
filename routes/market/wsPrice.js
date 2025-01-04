@@ -216,7 +216,7 @@ function getTickerFromUpbit(koreanCoinName_or_krwTicker) {
     if (pureTicker) {
         return pureTicker;
     } else {
-        console.log(`Korean coin name ${koreanCoinName_or_krwTicker} not found in mapping.`);
+        //console.log(`Korean coin name ${koreanCoinName_or_krwTicker} not found in mapping.`);
         return null;
     }
 }

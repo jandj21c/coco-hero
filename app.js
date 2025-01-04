@@ -47,8 +47,6 @@ exchange.initExchangeData();
 // 알고란 유튜브 새로운 영상 확인
 algoran_youtube.startVideoCheckScheduler();
 
-db.run();
-
 //notify.eventReadyPriceNotify();
 
 // unexpected error handlder
@@ -66,6 +64,6 @@ app.all('*', function(req, res){
 });
 
 app.listen(portNum, function() {
-  console.log('============= 기파랑의 리플 챗봇 서버가 시작되었습니다 ============');
+  console.log('============= 기파랑의 챗봇 서버가 시작되었습니다 ============');
   console.log(`=============      Server is up on port ${portNum}.    ============`);
 });
