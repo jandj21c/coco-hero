@@ -98,25 +98,13 @@ async function _parseItemCardBalloon(coinData) {
     "itemCard" : {}
   };
 
-  // imageTitle
-  itemCard.imageTitle = {};
-
-  itemCard.imageTitle.title = coinData.fixedTicker;
-  if (coinData.exchange === `upbit`) {
-    itemCard.imageTitle.description = `업비트에 등록된 티커입니다`; 
-  }
-  else if (coinData.exchange === `binance`) {
-    itemCard.imageTitle.description = `바이낸스에 등록된 티커입니다`; 
-  }
-  else if (coinData.exchange === `bithumb`) {
-    itemCard.imageTitle.description = `빗썸에 등록된 티커입니다`; 
-  }
 
   // title, description - 용도 모름
   //itemCard.title = "";
   //itemCard.description = "";
 
   // thumbnail - 코인 아이콘 대표 이미지
+  /*
   try {
     itemCard.thumbnail = {};
     
@@ -126,33 +114,38 @@ async function _parseItemCardBalloon(coinData) {
   } catch (error) {
     console.error(error.message);
   }
+  */
 
-  // profile
+  // profile - 최상단 (아이콘 + 티커이름)
   itemCard.profile = {};
+  itemCard.profile.title = coinData.fixedTicker;
+  itemCard.profile.imageUrl = await icons.getLogoUrl(coinData.fixedTicker);
 
+  // imageTitle
+  itemCard.imageTitle = {};
   if (coinData.exchange === `upbit`) {
-    itemCard.profile.title = `UPBIT`;
-    itemCard.profile.imageUrl = balloons.exchangeIocn_upbit;
+    itemCard.imageTitle.title = `UPBIT`; 
+    itemCard.imageTitle.description = `업비트 시세 정보입니다`; 
   }
   else if (coinData.exchange === `binance`) {
-    itemCard.profile.title = `BINANCE`;
-    itemCard.profile.imageUrl = balloons.exchangeIocn_binance;
+    itemCard.imageTitle.title = `BINANCE`; 
+    itemCard.imageTitle.description = `바이낸스에 시세 정보입니다`; 
   }
   else if (coinData.exchange === `bithumb`) {
-    itemCard.profile.title = `BITHUMB`;
-    itemCard.profile.imageUrl = balloons.exchangeIocn_bithumb;
+    itemCard.imageTitle.title = `BITHUMB`; 
+    itemCard.imageTitle.description = `빗썸에 시세 정보입니다`; 
   }
 
   // itemList - 본문에 들어갈 키 - 값 내용  < 말풍선 필수!! 값 >
   itemCard.itemList = [];
-    
+
+  // 가격
   if (coinData.exchange === `binance`) {
     itemCard.itemList.push({ title: "현재 가격", description: `$` + util.nameWithCommas(coinData.price)});
   }
   else{
     itemCard.itemList.push({ title: "현재 가격", description: util.nameWithCommas(coinData.price) + "원"});
   }
-
   // 변동율
   if (coinData.change > 0) {
     let fluctate = util.nameWithCommas(coinData.change);
@@ -166,7 +159,6 @@ async function _parseItemCardBalloon(coinData) {
 
     itemCard.itemList.push({ title: `변동`, description: fluctate });
   }
-  
   // 고가, 저가
   if (coinData.high > 0 && coinData.low > 0)
   {
@@ -179,18 +171,16 @@ async function _parseItemCardBalloon(coinData) {
       itemCard.itemList.push({ title: `저가`, description : util.nameWithCommas(coinData.low) + `원`});
     }
   }
-
   // 거래량
   if (coinData.volume > 0) {
     itemCard.itemList.push({ title: `거래량`, description: util.nameWithCommas(coinData.volume) + `(${coinData.fixedTicker})` });
   }
 
+  // 결과
   let balloon = balloons.balloonResponseWrapper();
   balloon.template.outputs.push({itemCard});
 
   log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
-
-  // 완성된 말풍선 데이터를 리턴한다. 
   //console.log(`완성된 말풍선 데이터 ${JSON.stringify(balloon, null, 4)}`);
 
   return balloon;
