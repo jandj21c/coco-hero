@@ -1,5 +1,6 @@
 require('dotenv').config();
 const axios = require('axios');
+const db = require('../../db/mongoTest'); // 파일 경로를 정확히 입력하세요.
 
 // CoinMarketCap API 키
 const apiKey = process.env.CMC_API_KEY;
@@ -40,12 +41,26 @@ async function getLogoUrl(symbol) {
     const data = response.data;
 
     if (data && data.data && data.data[symbol]) {
-      const logoUrl = data.data[symbol].logo;
-
       // 캐시에 저장
-      logoCache[symbol] = logoUrl;
-      console.log(`Icon URL Fetched from API and cached: ${symbol}`);
-      return logoUrl;
+      //logoCache[symbol] = logoUrl;
+
+      // DB에 저장
+      const iconData = {
+        symbol: symbol,
+        id: data.data[symbol].id,
+        name: data.data[symbol].name,
+        logoUrl: data.data[symbol].logo,
+        description: data.data[symbol].description,
+      };
+    
+      try {
+        const result = await db.insertData(iconData);
+        console.log('[아이콘 DB] 삽입된 데이터 ID:', result.insertedId);
+      } catch (error) {
+        console.error('[아이콘 DB] 데이터 삽입 중 오류 발생:', error.message);
+      }
+      return iconData.logoUrl;
+      
     } else {
       throw new Error(`Icon URL No data found for symbol: ${symbol}`);
     }
