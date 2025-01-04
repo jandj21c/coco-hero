@@ -24,6 +24,7 @@
     "express-error-handler": "^1.1.0",
     "http": "^0.0.1-security",
     "install": "^0.13.0",
+    "mongodb": "^6.12.0",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
     "path": "^0.12.7",

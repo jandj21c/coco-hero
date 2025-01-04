@@ -17,14 +17,13 @@ var config = require('./config');
 // 모듈로 분리한 라우팅 파일 불러오기
 var route_loader = require('./routes/route_loader');
 
-// 거래소 폴링 시작
-//var polling_coin_price = require('./routes/market/price');
 var exchange = require('./routes/market/wsPrice');
 var breakingNews = require('./news/coinNews');
 var algoran_youtube = require('./news/youtube');
-//var notify = require('./AlimCenter/priceNotifier');
+var db = require('./db/mongoTest');
 
-//var sequelize = require('./models').sequelize;
+
+//var notify = require('./AlimCenter/priceNotifier');
 
 //===== 서버 변수 설정 =====//
 let portNum = config.server_port;
@@ -47,6 +46,8 @@ exchange.initExchangeData();
 
 // 알고란 유튜브 새로운 영상 확인
 algoran_youtube.startVideoCheckScheduler();
+
+db.run();
 
 //notify.eventReadyPriceNotify();
 
