@@ -60,7 +60,7 @@ async function readData(symbol) {
 }
 
 // MongoDB 연결 실행
-connectToMongoDB();
+//connectToMongoDB();
 
 // 함수 export
 module.exports = {
