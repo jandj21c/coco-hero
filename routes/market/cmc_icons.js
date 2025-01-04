@@ -23,6 +23,7 @@ async function getLogoUrl(symbol) {
     const logoUrl = await db.readData(symbol);
     if (logoUrl) {
       console.log(`Symbol '${symbol}'의 logoUrl:`, logoUrl);
+      return logoUrl;
     } else {
       console.log(`Symbol '${symbol}'에 대한 데이터를 찾을 수 없습니다.`);
     }
