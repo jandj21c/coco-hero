@@ -17,11 +17,24 @@ const logoCache = {};
  * @returns {Promise<string>} - 로고 URL 또는 에러 메시지
  */
 async function getLogoUrl(symbol) {
-  // 캐시에 로고 URL이 있는지 확인
-  if (logoCache[symbol]) {
-    console.log(`Icon URL Cache hit for ${symbol}`);
-    return logoCache[symbol];
+
+  //DB에 있는지 확인
+  try {
+    const logoUrl = await db.readData(symbol);
+    if (logoUrl) {
+      console.log(`Symbol '${symbol}'의 logoUrl:`, logoUrl);
+    } else {
+      console.log(`Symbol '${symbol}'에 대한 데이터를 찾을 수 없습니다.`);
+    }
+  } catch (error) {
+    console.error('데이터 조회 중 오류 발생:', error.message);
   }
+  
+  // 캐시에 로고 URL이 있는지 확인
+  // if (logoCache[symbol]) {
+  //   console.log(`Icon URL Cache hit for ${symbol}`);
+  //   return logoCache[symbol];
+  // }
 
   // API 요청 옵션 설정
   const options = {
