@@ -54,6 +54,11 @@ async function coinPriceCommand(req, res) {
     coinName = firstIput;
     exchangeName = secondInput;
 
+    if (!validExchange_(exchangeName)) {
+      res.status(200).json(balloons.makeTemplateErrorText(`거래소 이름이 유효하지 않습니다. \n유효거래소 : '업비트' '바이낸스'`));
+      return;
+    }
+
   } else {
     coinName = utter.toUpperCase();   
   }
@@ -361,6 +366,16 @@ function getSearchCoinData(identifier, exchange) {
      console.log(`검색한 코인이름: ${coinData.fixedTicker}, 거래소: ${coinData.exchange}`);
 
     return coinData;
+}
+
+function validExchange_(exchangeName) {
+
+  const name = exchangeName.toUpperCase();
+  if (name === "업비트" || name === "UPBIT" || name === "바이낸스" || name === "BINANCE") {
+    return true;
+  }
+
+  return false;
 }
 
 module.exports = { initExchangeData, coinPriceCommand, getTickerPrice, getTickerFromBinance, getTickerFromUpbit, getPriceByIdentifier };
