@@ -8,13 +8,14 @@ let koreanCoinNameToTickerMap = {}; // 예시) '비트코인': 'KRW-BTC', '이�
 
 async function fetchUpbitTickerData() {
     try {
-        console.log('---- 업비트 원화 마켓 코인 [목록]과 [시세] 가져오기 ----');
+        //console.log('업비트 원화 마켓 코인 [목록]과 [시세] 가져오기');
 
          // Temporary object for new data
         var newTickerData = {};
         
         // Fetch KRW market codes using fetchKoreanCoinNameToTickerMap
         await fetchKoreanCoinNameToTickerMap();
+
         const krwMarketCodes = Object.keys(koreanCoinNameToTickerMap)
             .filter((coinName) => koreanCoinNameToTickerMap[coinName].startsWith('KRW-'))
             .map((coinName) => koreanCoinNameToTickerMap[coinName]);
@@ -44,7 +45,7 @@ async function fetchUpbitTickerData() {
         Object.assign(upbitTickerData, newTickerData);
 
         //console.log('All ticker data updated:', upbitTickerData);
-        console.log(`[Upbit Price Updated] Number of tickers : ${Object.keys(upbitTickerData).length}`);
+        console.log(`업비트 시세 Updated. Count = ${Object.keys(upbitTickerData).length}`);
     } catch (error) {
         console.error('Error fetching ticker data from Upbit:', error);
     }
@@ -74,7 +75,7 @@ async function fetchKoreanCoinNameToTickerMap() {
         });
 
         //console.log('Korean coin name to ticker map populated for KRW markets:', koreanCoinNameToTickerMap);
-        console.log('[Upbit Ticker List Updated]');
+        console.log('업비트 코인목록 Updated.');
     } catch (error) {
         console.error('Error fetching market info from Upbit:', error);
     }
@@ -97,4 +98,4 @@ function findUpbitPureTicker(inputString) {
     return null; // Return null if no match is found
 }
 
-module.exports = { upbitTickerData, koreanCoinNameToTickerMap, startFetchingTickerData, fetchKoreanCoinNameToTickerMap, findUpbitPureTicker };
+module.exports = { upbitTickerData, koreanCoinNameToTickerMap, startFetchingTickerData, findUpbitPureTicker };

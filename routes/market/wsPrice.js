@@ -9,13 +9,13 @@ const log = require('../../logger');
 // 외부에서 호출하는 엔트리
 async function initExchangeData() {
 
-    console.log('initialize exchange polling. 거래소 폴링 시작. 20초 마다 업데이트');
+    console.log('거래소 폴링 시작');
 
     await wsBinance.startFetchingTickerData();
     await wsUpbit.startFetchingTickerData();
 
     if (process.env.NODE_ENV === 'development') {
-      _parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
+      //_parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
     }
 }
 
@@ -34,19 +34,12 @@ async function coinPriceCommand(req, res) {
 
     let utter = req.body.userRequest.utterance.trim(); // 앞뒤 공백 제거
   
-    if (!utter.startsWith("/p ") && !utter.startsWith("시세 ")) { //const regex = /^(\/p |시세 )/;
-      res.status(200).json(balloons.makeTemplateErrorText("알 수 없는 명령어 입니다"));
+    coinName = utter.toUpperCase(); 
+    if (coinName.length < 2) {
+      res.status(200).json(balloons.makeTemplateErrorText("티커명은 2자 이상입니다."));
       return;
     }
 
-    // "/p {코인이름}"" 이 들어왔을 거라 생각하고 앞의 /p 를 제거, 남은 문자의 앞공백 제거, 대문자로 변경 
-    coinName = utter.substr(2).trim().toUpperCase();
-
-    if (coinName.length === 0) {
-      res.status(200).json(balloons.makeTemplateErrorText("티커명이 비어있습니다."));
-      return;
-    }
-    
     console.log(JSON.stringify(`사용자가 시세 정보를 요청한 코인: ${coinName}`));
   }
   else {
@@ -54,8 +47,15 @@ async function coinPriceCommand(req, res) {
     return;
   }
 
+  // 거래소에 등록된 코인인지 확인
+  let registerCoinData = getSearchCoinData(coinName);
+  if (!registerCoinData) {
+    res.status(200).json(balloons.makeTemplateErrorText("해당 코인이름은 등록되어 있지 않습니다. 코인이름 혹은 티커를 입력해주세요"));
+    return;
+  }
+
   // 거래소에서 가져온 코인 정보로 말풍선을 만든다
-  _parseItemCardBalloon(getSearchCoinData(coinName))
+  _parseItemCardBalloon(registerCoinData)
     .then(resbody => {
       if (!resbody) {
         res.status(200).json(balloons.makeTemplateErrorText("문제가 발생했습니다."));

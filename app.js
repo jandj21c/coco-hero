@@ -65,5 +65,5 @@ app.all('*', function(req, res){
 
 app.listen(portNum, function() {
   console.log('============= 기파랑의 챗봇 서버가 시작되었습니다 ============');
-  console.log(`=============      Server is up on port ${portNum}.    ============`);
+  console.log(`사용중인 Port : ${portNum}`);
 });

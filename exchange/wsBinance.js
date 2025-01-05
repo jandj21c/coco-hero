@@ -8,7 +8,7 @@ let englisthCoinNameToTickerMap = {}; //대문자 주의!  ex) 'PEPE': 'PEPEUSDT
 // Function to fetch and log USDT market data every 10 seconds
 async function fetchAndLogBinanceTickerData() {
     try {
-        console.log('---- 바이낸스 USDT 마켓 코인 [시세] 가져오기 ----');
+        //console.log('바이낸스 USDT 마켓 코인 [시세] 가져오기 ----');
 
          // Temporary object for new data
         var newTickerData = {};
@@ -48,7 +48,7 @@ async function fetchAndLogBinanceTickerData() {
         Object.assign(binanceTickerData, newTickerData);
 
         //console.log('Ticker Data Snapshot:', binanceTickerData);
-        console.log(`[Binance Price Updated] Number of tickers : ${Object.keys(binanceTickerData).length}`);
+        console.log(`바이낸스 시세 Updated.  Count = ${Object.keys(binanceTickerData).length}`);
 
     } catch (error) {
         console.error('Error fetching ticker data from Binance:', error);
@@ -73,7 +73,7 @@ async function fetchEnglishCoinNameToTickerMap() {
 
         //console.log('Coin name to ticker map populated:', englisthCoinNameToTickerMap);
 
-        console.log('[Binance Ticker List Updated]');
+        console.log('바이낸스 코인목록 Updated.');
     } catch (error) {
         console.error('Error fetching exchange info from Binance:', error);
     }
@@ -83,8 +83,9 @@ async function fetchEnglishCoinNameToTickerMap() {
 async function startFetchingTickerData() {
     fetchEnglishCoinNameToTickerMap();
     await fetchAndLogBinanceTickerData(); // Initial fetch
+
     setInterval(fetchAndLogBinanceTickerData, 20 * 1000); // Fetch every 20 seconds
     setInterval(fetchEnglishCoinNameToTickerMap, 5 * 20 * 1000); // Fetch every 5분
 }
 
-module.exports = { binanceTickerData, englisthCoinNameToTickerMap, fetchEnglishCoinNameToTickerMap, startFetchingTickerData };
+module.exports = { binanceTickerData, englisthCoinNameToTickerMap, startFetchingTickerData };

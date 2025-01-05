@@ -12,19 +12,21 @@ async function connectToMongoDB() {
           version: ServerApiVersion.v1,
           strict: true,
           deprecationErrors: true,
-        }
+        },
+        autoSelectFamily: false // 로컬에서 ip6 로 붙는 문제 해결
       });
 
     await client.connect();
-    console.log('MongoDB 클라우드에 연결 성공');
+    console.log('[mongoDB] 클라우드에 연결 성공');
     db = client.db(dbName);
 
     // 테이블(컬렉션) 생성 및 Primary Key 설정
     const collection = db.collection('cmc_icon_info');
     await collection.createIndex({ symbol: 1 }, { unique: true });
-    console.log('cmc_icon_info 컬렉션 초기화 완료');
+    console.log('[mongoDB] cmc_icon_info 컬렉션 초기화 완료');
+
   } catch (error) {
-    console.error('MongoDB 연결 실패:', error);
+    console.error('-------- [mongoDB] 연결 실패: --------', error);
   }
 }
 
@@ -33,10 +35,10 @@ async function insertData(data) {
   try {
     const collection = db.collection('cmc_icon_info');
     const result = await collection.insertOne(data);
-    console.log('데이터 삽입 성공:', result.insertedId);
+    console.log('[mongoDB] 데이터 삽입 성공:', result.insertedId);
     return result;
   } catch (error) {
-    console.error('데이터 삽입 실패:', error);
+    console.error('-------- [mongoDB] 데이터 삽입 실패: --------', error);
     throw error;
   }
 }
@@ -47,14 +49,14 @@ async function readData(symbol) {
     const collection = db.collection('cmc_icon_info');
     const data = await collection.findOne({ symbol }, { projection: { logoUrl: 1, _id: 0 } });
     if (data) {
-      console.log('데이터 조회 성공:', data.logoUrl);
+      console.log('[mongoDB] 데이터 조회 성공:', data.logoUrl);
       return data.logoUrl;
     } else {
-      console.log('해당 symbol에 대한 데이터가 없습니다.');
+      console.log('[mongoDB] 해당 symbol에 대한 데이터가 없습니다.');
       return null;
     }
   } catch (error) {
-    console.error('데이터 조회 실패:', error);
+    console.error('-------- [mongoDB] 데이터 조회 실패: --------', error);
     throw error;
   }
 }

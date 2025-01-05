@@ -3,7 +3,7 @@ var route_loader = {};
 var config = require('../config');
 
 route_loader.init = function(app, router) {
-	console.log('============= route_loader.init 호출됨. =============');
+	console.log('============= Router 초기화 =============');
 	return initRoutes(app, router);
 }
 
@@ -11,7 +11,7 @@ route_loader.init = function(app, router) {
 function initRoutes(app, router) {
 
 	var infoLen = config.route_info.length;
-	console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
+	//console.log('설정에 정의된 라우팅 모듈의 수 : %d', infoLen);
 
 	for (var i = 0; i < infoLen; i++) {
 		var curItem = config.route_info[i];
