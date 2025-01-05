@@ -31,32 +31,32 @@ async function connectToMongoDB() {
 }
 
 // 데이터 삽입 함수
-async function insertData(data) {
+async function insertIconData(data) {
   try {
     const collection = db.collection('cmc_icon_info');
     const result = await collection.insertOne(data);
-    console.log('[mongoDB] 데이터 삽입 성공:', result.insertedId);
+    console.log('[mongoDB] 아이콘 데이터 삽입 성공:', result.insertedId);
     return result;
   } catch (error) {
-    console.error('-------- [mongoDB] 데이터 삽입 실패: --------', error);
+    console.error('-------- [mongoDB] 아이콘 데이터 삽입 실패: --------', error);
     throw error;
   }
 }
 
 // 데이터 조회 함수 (symbol로 logoUrl 가져오기)
-async function readData(symbol) {
+async function readIconData(symbol) {
   try {
     const collection = db.collection('cmc_icon_info');
     const data = await collection.findOne({ symbol }, { projection: { logoUrl: 1, _id: 0 } });
     if (data) {
-      console.log('[mongoDB] 데이터 조회 성공:', data.logoUrl);
+      console.log('[mongoDB] 아이콘 데이터 조회 성공:', data.logoUrl);
       return data.logoUrl;
     } else {
-      console.log('[mongoDB] 해당 symbol에 대한 데이터가 없습니다.');
+      console.log('[mongoDB] 해당 symbol에 대한 아이콘 데이터가 없습니다.');
       return null;
     }
   } catch (error) {
-    console.error('-------- [mongoDB] 데이터 조회 실패: --------', error);
+    console.error('-------- [mongoDB] 아이콘 데이터 조회 실패: --------', error);
     throw error;
   }
 }
@@ -66,6 +66,6 @@ connectToMongoDB();
 
 // 함수 export
 module.exports = {
-  insertData,
-  readData,
+  insertIconData,
+  readIconData,
 };

@@ -289,7 +289,7 @@ function getSearchCoinData(identifier) {
     change: ticker.priceChangePercent, // 변화율
     timestamp: Date.now()
     */
-     console.log(`검색한 코인이름 : ${coinData.fixedTicker}, 거래소 " ${coinData.exchange}`);
+     console.log(`검색한 코인이름: ${coinData.fixedTicker}, 거래소: ${coinData.exchange}`);
 
     return coinData;
 }
