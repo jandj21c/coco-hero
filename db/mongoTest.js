@@ -52,7 +52,7 @@ async function readIconData(symbol) {
       console.log('[mongoDB] 아이콘 데이터 조회 성공:', data.logoUrl);
       return data.logoUrl;
     } else {
-      console.log('[mongoDB] 해당 symbol에 대한 아이콘 데이터가 없습니다.');
+      console.log(`[mongoDB] 해당 symbol: ${symbol}에 대한 아이콘 데이터가 없습니다.`);
       return null;
     }
   } catch (error) {

@@ -28,13 +28,23 @@ var nameWithCommas = function (x) {
     // 입력값이 10 이상 1000 미만인 경우: 소수점 두 자리 유지
     if (parts[1]) parts[1] = parts[1].substring(0, 2);
   } else if (x < 10 && parts[1]) {
-    // 입력값이 10 미만인 경우: 소수점 아래에서 0이 아닌 최대 3자리 유지
-    let significantDigits = 0;
+    let totalDigits = 0;
+    let foundNonZero = false;
+
     parts[1] = parts[1]
       .split("")
       .filter((digit) => {
-        if (digit !== "0") significantDigits++;
-        return significantDigits <= 3;
+        // 0이 아닌 숫자를 만났는지 확인
+        if (digit !== "0") foundNonZero = true;
+
+        // 유효 숫자를 만난 이후부터 처리
+        if (foundNonZero) {
+          totalDigits++;
+          return totalDigits <= 3; // 숫자(0 포함) 3개까지 유지
+        }
+
+        // 유효 숫자를 만나기 전의 0은 그대로 보존
+        return true;
       })
       .join("");
   }

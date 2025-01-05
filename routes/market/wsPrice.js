@@ -15,7 +15,10 @@ async function initExchangeData() {
     await wsUpbit.startFetchingTickerData();
 
     if (process.env.NODE_ENV === 'development') {
-      //_parseItemCardBalloon(getSearchCoinData("PEOPLE")); //test:
+      //test:
+      setTimeout(() => {
+        _parseItemCardBalloon(getSearchCoinData("PEOPLE")); 
+      }, 5000);
     }
 }
 
