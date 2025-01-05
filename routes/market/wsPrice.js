@@ -49,7 +49,7 @@ async function coinPriceCommand(req, res) {
   } else if (hasSingleSpace.test(utter)) {
 
     // 공백을 기준으로 문자열을 분리
-    const [firstIput, secondInput] = input.split(/\s+/, 2);
+    const [firstIput, secondInput] = utter.split(/\s+/, 2);
 
     coinName = firstIput;
     exchangeName = secondInput;
