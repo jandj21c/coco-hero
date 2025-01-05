@@ -139,13 +139,6 @@ async function _parseItemCardBalloon(coinData) {
   // itemList - 본문에 들어갈 키 - 값 내용  < 말풍선 필수!! 값 >
   itemCard.itemList = [];
 
-  // 가격
-  if (coinData.exchange === `binance`) {
-    itemCard.itemList.push({ title: "현재 가격", description: `$` + util.nameWithCommas(coinData.price)});
-  }
-  else{
-    itemCard.itemList.push({ title: "현재 가격", description: util.nameWithCommas(coinData.price) + "원"});
-  }
   // 변동율
   if (coinData.change > 0) {
     let fluctate = util.nameWithCommas(coinData.change);
@@ -173,7 +166,20 @@ async function _parseItemCardBalloon(coinData) {
   }
   // 거래량
   if (coinData.volume > 0) {
-    itemCard.itemList.push({ title: `거래량`, description: util.nameWithCommas(coinData.volume) + `(${coinData.fixedTicker})` });
+    itemCard.itemList.push({ title: `거래량`, description: util.nameWithCommas(coinData.volume) + ` (${coinData.fixedTicker})` });
+  }
+
+  // 좌우 정렬
+  itemCard.itemListAlignment = "right";
+
+  // 강조 텍스트
+  itemCard.itemListSummary = {};
+  itemCard.itemListSummary.title = "현재가";
+  if (coinData.exchange === `binance`) {
+    itemCard.itemListSummary.description ="$" + util.nameWithCommas(coinData.price);
+  }
+  else {
+    itemCard.itemListSummary.description = util.nameWithCommas(coinData.price) + "원"
   }
 
   // 결과
