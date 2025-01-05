@@ -17,7 +17,7 @@ async function initExchangeData() {
     if (process.env.NODE_ENV === 'development') {
       //test:
       setTimeout(() => {
-        _parseItemCardBalloon(getSearchCoinData("PEOPLE")); 
+        _parseItemCardBalloon(getSearchCoinData("steem")); 
       }, 5000);
     }
 }
@@ -51,8 +51,8 @@ async function coinPriceCommand(req, res) {
     // 공백을 기준으로 문자열을 분리
     const [firstIput, secondInput] = utter.split(/\s+/, 2);
 
-    coinName = firstIput;
-    exchangeName = secondInput;
+    coinName = firstIput.toUpperCase();
+    exchangeName = secondInput.toUpperCase();
 
     if (!validExchange_(exchangeName)) {
       res.status(200).json(balloons.makeTemplateErrorText(`거래소 이름이 유효하지 않습니다. \n유효거래소 : '업비트' '바이낸스'`));
@@ -300,6 +300,8 @@ function getTickerByIdentifier(identifier) {
 }
 
 function getSearchCoinData(identifier, exchange) {
+
+    identifier = identifier.toUpperCase();
 
     let coinData =  null;
 
