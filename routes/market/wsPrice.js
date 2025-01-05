@@ -25,36 +25,58 @@ async function initExchangeData() {
 async function coinPriceCommand(req, res) {
 
   console.log('-------------- coinPriceCommand req COMMING ----------------');
-  //console.log('----------- coinPriceCommand chat bot server request body -------------');
-  //console.log(JSON.stringify(req.body, null, 4));
-  //console.log('----------- coinPriceCommand chat bot server request end -----------');
-
   console.log(JSON.stringify(req.body, null, 4));
 
-  let coinName;
+  if ( !req.body || !req.body.userRequest.utterance || !req.body.userRequest.utterance.trim()) {
 
-  if ( req.body && req.body.userRequest.utterance && req.body.userRequest.utterance.trim()) {
-
-    let utter = req.body.userRequest.utterance.trim(); // 앞뒤 공백 제거
-  
-    coinName = utter.toUpperCase(); 
-    if (coinName.length < 2) {
-      res.status(200).json(balloons.makeTemplateErrorText("티커명은 2자 이상입니다."));
-      return;
-    }
-
-    console.log(JSON.stringify(`사용자가 시세 정보를 요청한 코인: ${coinName}`));
-  }
-  else {
     res.status(200).json(balloons.makeTemplateErrorText("코인 가격 검색 요청이 올바르지 않습니다."));
     return;
   }
+  
+  let utter = req.body.userRequest.utterance.trim(); // 앞뒤 공백 제거
 
-  // 거래소에 등록된 코인인지 확인
-  let registerCoinData = getSearchCoinData(coinName);
-  if (!registerCoinData) {
-    res.status(200).json(balloons.makeTemplateErrorText("해당 코인이름은 등록되어 있지 않습니다. 코인이름 혹은 티커를 입력해주세요"));
+  const hasMultipleSpaces = /\s{2,}/;   // 공백이 두 번 이상 발생하는지 확인
+  const hasSingleSpace = /\s+/;         // 공백이 한 번만 발생하는지 확인
+
+  let coinName;
+  let exchangeName;
+
+  if (hasMultipleSpaces.test(utter)) {
+
+    res.status(200).json(balloons.makeTemplateErrorText(`공백을 기준으로 코인명과 거래소명을 입력하세요.\n예시) '비트코인 바이낸스' `));
     return;
+
+  } else if (hasSingleSpace.test(utter)) {
+
+    // 공백을 기준으로 문자열을 분리
+    const [firstIput, secondInput] = input.split(/\s+/, 2);
+
+    coinName = firstIput;
+    exchangeName = secondInput;
+
+  } else {
+    coinName = utter.toUpperCase();   
+  }
+  
+  if (coinName.length < 2) {
+    res.status(200).json(balloons.makeTemplateErrorText("티커명은 2자 이상입니다."));
+    return;
+  }
+
+  console.log(`사용자가 시세 정보를 요청한 코인: ${coinName}`);
+  
+  // 거래소에 등록된 코인인지 확인
+  let registerCoinData = getSearchCoinData(coinName, exchangeName);
+  if (!registerCoinData) 
+  {
+    if (exchangeName) {
+      res.status(200).json(balloons.makeTemplateErrorText(`${coinName} 코인이름은 ${exchangeName.toUpperCase()} 거래소에 등록되어 있지 않습니다.`));
+      return;
+    } 
+    else {
+      res.status(200).json(balloons.makeTemplateErrorText(`${coinName} 코인이름은 등록되어 있지 않습니다. 코인이름 혹은 티커를 입력해주세요`));
+      return;
+    }
   }
 
   // 거래소에서 가져온 코인 정보로 말풍선을 만든다
@@ -272,18 +294,56 @@ function getTickerByIdentifier(identifier) {
     return null;
 }
 
-function getSearchCoinData(identifier) {
+function getSearchCoinData(identifier, exchange) {
 
     let coinData =  null;
 
-    const ticker = getTickerFromUpbit(identifier);
-    if (ticker && wsUpbit.upbitTickerData[ticker])
-    {
-        coinData = wsUpbit.upbitTickerData[ticker];
+    if (exchange === undefined) {
+
+      // 거래소를 지정하지  않았을 경우 
+      const ticker = getTickerFromUpbit(identifier);
+      if (ticker && wsUpbit.upbitTickerData[ticker])
+      {
+          coinData = wsUpbit.upbitTickerData[ticker];
+      }
+      else if (wsBinance.binanceTickerData[identifier])
+      {
+          coinData = wsBinance.binanceTickerData[identifier];
+      }
+
     }
-    else if (wsBinance.binanceTickerData[identifier])
-    {
-        coinData = wsBinance.binanceTickerData[identifier];
+    else {
+
+      // 거래소를 지정한 경우 
+      if (exchange === "업비트" || exchange.toUpperCase() === "UPBIT") {
+
+        const ticker = getTickerFromUpbit(identifier);
+        if (ticker && wsUpbit.upbitTickerData[ticker])
+        {
+            coinData = wsUpbit.upbitTickerData[ticker];
+        }
+
+      } else if (exchange === "빗썸" || exchange.toUpperCase() === "BITHUMB") {
+        
+        // TODO
+        coinData = null;
+
+      } else if (exchange === "바이낸스" || exchange.toUpperCase() === "BINANCE") {
+
+        // 한국어로 입력했을 수 있으니 업비트와 빗썸 리스트에서 티커 확보
+        let ticker = getTickerFromUpbit(identifier);
+        if (ticker) {
+          if (wsBinance.binanceTickerData[ticker]) { 
+            coinData = wsBinance.binanceTickerData[ticker];
+          }
+        }
+        else { 
+          if (wsBinance.binanceTickerData[identifier]) {
+            coinData = wsBinance.binanceTickerData[identifier];
+          }
+        }
+      }
+
     }
 
     if (!coinData){
