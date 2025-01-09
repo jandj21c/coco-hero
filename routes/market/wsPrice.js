@@ -159,11 +159,11 @@ async function _parseItemCardBalloon(coinData) {
   }
   else if (coinData.exchange === `binance`) {
     itemCard.imageTitle.title = `BINANCE`; 
-    itemCard.imageTitle.description = `바이낸스에 시세 정보입니다`; 
+    itemCard.imageTitle.description = `바이낸스 시세 정보입니다`; 
   }
   else if (coinData.exchange === `bithumb`) {
     itemCard.imageTitle.title = `BITHUMB`; 
-    itemCard.imageTitle.description = `빗썸에 시세 정보입니다`; 
+    itemCard.imageTitle.description = `빗썸 시세 정보입니다`; 
   }
 
   // itemList - 본문에 들어갈 키 - 값 내용  < 말풍선 필수!! 값 >
